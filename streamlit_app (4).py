@@ -100,6 +100,10 @@ max_toks = st.sidebar.slider(
 )
 generate = st.sidebar.button("Generate Summary")
 
+generate = st.sidebar.button("Generate Summary")
+
+generate = st.sidebar.button("Generate Summary")
+
 if generate:
     if not uploaded_file:
         st.sidebar.warning("Please upload a file first.")
@@ -108,9 +112,33 @@ if generate:
     name = uploaded_file.name.lower()
     encoder = tiktoken.encoding_for_model("gpt-4o")
 
+    # Helper to truncate text so we stay under rate limits
+    def truncate_text(text: str, persona_desc: str, max_toks: int) -> str:
+        sys_tokens = len(encoder.encode(persona_desc))
+        preamble   = "Document content:\n\n"
+        postamble  = f"\n\nPlease summarize for a {persona}."
+        overhead   = (
+            sys_tokens
+            + len(encoder.encode(preamble))
+            + len(encoder.encode(postamble))
+            + max_toks
+            + 50
+        )
+        tpm_limit       = 30_000
+        allowed_doc_tok = max(0, tpm_limit - overhead)
+
+        doc_tokens = encoder.encode(text)
+        if len(doc_tokens) > allowed_doc_tok:
+            st.warning(f"⚠️ Input was too long and has been truncated to ~{allowed_doc_tok} tokens.")
+            doc_tokens = doc_tokens[:allowed_doc_tok]
+            return encoder.decode(doc_tokens)
+        return text
+
+    # --------------------
     # ZIP branch
+    # --------------------
     if name.endswith(".zip"):
-        # extract
+        # extract & truncate
         extracted_docs = {}
         with zipfile.ZipFile(uploaded_file) as z:
             for pdf_name in z.namelist():
@@ -119,7 +147,7 @@ if generate:
                         raw = extract_text_from_pdf(f)
                         extracted_docs[pdf_name] = truncate_text(raw, DESCRIPTIONS[persona], max_toks)
 
-        # summarize + compatibility scoring
+        # summarize + score
         summary_by_pdf = {}
         score_by_pdf   = {}
         for pdf_name, pdf_text in extracted_docs.items():
@@ -158,7 +186,9 @@ if generate:
             st.write(summary_by_pdf[pdf_name])
             st.markdown(f"**Compatibility score for {persona}:** {score_by_pdf[pdf_name]}/5")
 
+    # --------------------
     # Single‑PDF branch
+    # --------------------
     else:
         with st.spinner("Extracting text…"):
             raw = extract_text_from_pdf(uploaded_file)
