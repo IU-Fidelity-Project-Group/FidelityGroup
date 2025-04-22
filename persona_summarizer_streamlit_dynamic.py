@@ -107,7 +107,7 @@ if generate:
     doc_embedding = get_embedding(doc_text)
 
     # Vector match glossary & persona content
-    glossary_hits = query_astra_vectors(glossary_collection, doc_embedding, top_k=5)
+    glossary_hits = query_astra_vectors(glossary_collection, doc_embedding, top_k=20)
     glossary_context = "\n\n".join([d.get("text", "") for d in glossary_hits])
 
     persona_hits = query_astra_vectors(persona_collection, doc_embedding, top_k=1)
