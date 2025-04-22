@@ -155,10 +155,16 @@ if generate:
                 max_tokens=max_toks,
             )
             summary = resp.choices[0].message.content
-            st.subheader("Summary Output")
-            st.write(summary)
+            if name.endswith(".zip"):
+                for pdf_name, pdf_text in extracted_docs.items():
+                    st.subheader(pdf_name)        # ← here’s the title of each PDF
+                    st.write(summary_by_pdf[pdf_name])
+            else:
+                # Single‑PDF case: use the uploaded filename
+                st.subheader(uploaded_file.name)  # ← here’s your single file’s title
+                st.write(summary)
         except Exception as e:
-            st.error(f"OpenAI error: {e}")
+                st.error(f"OpenAI error: {e}")
 
 # --------------------
 # Feedback stub
