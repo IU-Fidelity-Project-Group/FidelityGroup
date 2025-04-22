@@ -4,3 +4,4 @@ unstructured
 pdfminer.six
 pi-heif
 unstructured-inference
+pdf2image
