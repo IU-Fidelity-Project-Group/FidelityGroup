@@ -120,34 +120,6 @@
         "className": "",
         "data": {
           "sourceHandle": {
-            "dataType": "CombineText",
-            "id": "CombineText-rxTMS",
-            "name": "combined_text",
-            "output_types": [
-              "Message"
-            ]
-          },
-          "targetHandle": {
-            "fieldName": "input_value",
-            "id": "OpenAIModel-2HPDK",
-            "inputTypes": [
-              "Message"
-            ],
-            "type": "str"
-          }
-        },
-        "id": "reactflow__edge-CombineText-rxTMS{œdataTypeœ:œCombineTextœ,œidœ:œCombineText-rxTMSœ,œnameœ:œcombined_textœ,œoutput_typesœ:[œMessageœ]}-OpenAIModel-2HPDK{œfieldNameœ:œinput_valueœ,œidœ:œOpenAIModel-2HPDKœ,œinputTypesœ:[œMessageœ],œtypeœ:œstrœ}",
-        "selected": false,
-        "source": "CombineText-rxTMS",
-        "sourceHandle": "{œdataTypeœ:œCombineTextœ,œidœ:œCombineText-rxTMSœ,œnameœ:œcombined_textœ,œoutput_typesœ:[œMessageœ]}",
-        "target": "OpenAIModel-2HPDK",
-        "targetHandle": "{œfieldNameœ:œinput_valueœ,œidœ:œOpenAIModel-2HPDKœ,œinputTypesœ:[œMessageœ],œtypeœ:œstrœ}"
-      },
-      {
-        "animated": false,
-        "className": "",
-        "data": {
-          "sourceHandle": {
             "dataType": "Prompt",
             "id": "Prompt-zS2o8",
             "name": "prompt",
@@ -484,6 +456,7 @@
       },
       {
         "animated": false,
+        "className": "",
         "data": {
           "sourceHandle": {
             "dataType": "OpenAIEmbeddings",
@@ -511,6 +484,7 @@
       },
       {
         "animated": false,
+        "className": "",
         "data": {
           "sourceHandle": {
             "dataType": "OpenAIEmbeddings",
@@ -538,6 +512,7 @@
       },
       {
         "animated": false,
+        "className": "",
         "data": {
           "sourceHandle": {
             "dataType": "TextEmbedderComponent",
@@ -565,6 +540,7 @@
       },
       {
         "animated": false,
+        "className": "",
         "data": {
           "sourceHandle": {
             "dataType": "TextEmbedderComponent",
@@ -592,6 +568,7 @@
       },
       {
         "animated": false,
+        "className": "",
         "data": {
           "sourceHandle": {
             "dataType": "EmbeddingSimilarityComponent",
@@ -620,6 +597,7 @@
       },
       {
         "animated": false,
+        "className": "",
         "data": {
           "sourceHandle": {
             "dataType": "OpenAIModel",
@@ -647,6 +625,7 @@
       },
       {
         "animated": false,
+        "className": "",
         "data": {
           "sourceHandle": {
             "dataType": "ParserComponent",
@@ -674,33 +653,7 @@
       },
       {
         "animated": false,
-        "data": {
-          "sourceHandle": {
-            "dataType": "CombineText",
-            "id": "CombineText-oHY8d",
-            "name": "combined_text",
-            "output_types": [
-              "Message"
-            ]
-          },
-          "targetHandle": {
-            "fieldName": "input_value",
-            "id": "TextInput-88eRs",
-            "inputTypes": [
-              "Message"
-            ],
-            "type": "str"
-          }
-        },
-        "id": "xy-edge__CombineText-oHY8d{œdataTypeœ:œCombineTextœ,œidœ:œCombineText-oHY8dœ,œnameœ:œcombined_textœ,œoutput_typesœ:[œMessageœ]}-TextInput-88eRs{œfieldNameœ:œinput_valueœ,œidœ:œTextInput-88eRsœ,œinputTypesœ:[œMessageœ],œtypeœ:œstrœ}",
-        "selected": false,
-        "source": "CombineText-oHY8d",
-        "sourceHandle": "{œdataTypeœ:œCombineTextœ,œidœ:œCombineText-oHY8dœ,œnameœ:œcombined_textœ,œoutput_typesœ:[œMessageœ]}",
-        "target": "TextInput-88eRs",
-        "targetHandle": "{œfieldNameœ:œinput_valueœ,œidœ:œTextInput-88eRsœ,œinputTypesœ:[œMessageœ],œtypeœ:œstrœ}"
-      },
-      {
-        "animated": false,
+        "className": "",
         "data": {
           "sourceHandle": {
             "dataType": "ParserComponent",
@@ -728,11 +681,12 @@
       },
       {
         "animated": false,
+        "className": "",
         "data": {
           "sourceHandle": {
-            "dataType": "ParserComponent",
-            "id": "ParserComponent-dA1Q4",
-            "name": "parsed_text",
+            "dataType": "OpenAIModel",
+            "id": "OpenAIModel-5ZoHN",
+            "name": "text_output",
             "output_types": [
               "Message"
             ]
@@ -746,12 +700,42 @@
             "type": "str"
           }
         },
-        "id": "xy-edge__ParserComponent-dA1Q4{œdataTypeœ:œParserComponentœ,œidœ:œParserComponent-dA1Q4œ,œnameœ:œparsed_textœ,œoutput_typesœ:[œMessageœ]}-TextEmbedderComponent-bXoUA{œfieldNameœ:œmessageœ,œidœ:œTextEmbedderComponent-bXoUAœ,œinputTypesœ:[œMessageœ],œtypeœ:œstrœ}",
+        "id": "xy-edge__OpenAIModel-5ZoHN{œdataTypeœ:œOpenAIModelœ,œidœ:œOpenAIModel-5ZoHNœ,œnameœ:œtext_outputœ,œoutput_typesœ:[œMessageœ]}-TextEmbedderComponent-bXoUA{œfieldNameœ:œmessageœ,œidœ:œTextEmbedderComponent-bXoUAœ,œinputTypesœ:[œMessageœ],œtypeœ:œstrœ}",
         "selected": false,
-        "source": "ParserComponent-dA1Q4",
-        "sourceHandle": "{œdataTypeœ:œParserComponentœ,œidœ:œParserComponent-dA1Q4œ,œnameœ:œparsed_textœ,œoutput_typesœ:[œMessageœ]}",
+        "source": "OpenAIModel-5ZoHN",
+        "sourceHandle": "{œdataTypeœ:œOpenAIModelœ,œidœ:œOpenAIModel-5ZoHNœ,œnameœ:œtext_outputœ,œoutput_typesœ:[œMessageœ]}",
         "target": "TextEmbedderComponent-bXoUA",
         "targetHandle": "{œfieldNameœ:œmessageœ,œidœ:œTextEmbedderComponent-bXoUAœ,œinputTypesœ:[œMessageœ],œtypeœ:œstrœ}"
+      },
+      {
+        "animated": false,
+        "className": "",
+        "data": {
+          "sourceHandle": {
+            "dataType": "CombineText",
+            "id": "CombineText-oHY8d",
+            "name": "combined_text",
+            "output_types": [
+              "Message"
+            ]
+          },
+          "targetHandle": {
+            "fieldName": "input_value",
+            "id": "ChatOutput-AJXQh",
+            "inputTypes": [
+              "Data",
+              "DataFrame",
+              "Message"
+            ],
+            "type": "other"
+          }
+        },
+        "id": "xy-edge__CombineText-oHY8d{œdataTypeœ:œCombineTextœ,œidœ:œCombineText-oHY8dœ,œnameœ:œcombined_textœ,œoutput_typesœ:[œMessageœ]}-ChatOutput-AJXQh{œfieldNameœ:œinput_valueœ,œidœ:œChatOutput-AJXQhœ,œinputTypesœ:[œDataœ,œDataFrameœ,œMessageœ],œtypeœ:œotherœ}",
+        "selected": false,
+        "source": "CombineText-oHY8d",
+        "sourceHandle": "{œdataTypeœ:œCombineTextœ,œidœ:œCombineText-oHY8dœ,œnameœ:œcombined_textœ,œoutput_typesœ:[œMessageœ]}",
+        "target": "ChatOutput-AJXQh",
+        "targetHandle": "{œfieldNameœ:œinput_valueœ,œidœ:œChatOutput-AJXQhœ,œinputTypesœ:[œDataœ,œDataFrameœ,œMessageœ],œtypeœ:œotherœ}"
       }
     ],
     "nodes": [
@@ -1015,7 +999,7 @@
                 "input_types": [
                   "Message"
                 ],
-                "load_from_db": false,
+                "load_from_db": true,
                 "name": "api_key",
                 "password": true,
                 "placeholder": "",
@@ -2207,7 +2191,7 @@
                 "tool_mode": false,
                 "trace_as_metadata": true,
                 "type": "str",
-                "value": ""
+                "value": "https://255cbde1-b53f-4dc1-b18b-8f9dbc13d28f-us-east1.apps.astra.datastax.com"
               },
               "astradb_vectorstore_kwargs": {
                 "_input_type": "NestedDictInput",
@@ -2266,7 +2250,7 @@
               },
               "collection_name": {
                 "_input_type": "DropdownInput",
-                "advanced": true,
+                "advanced": false,
                 "combobox": true,
                 "dialog_inputs": {
                   "fields": {
@@ -2385,8 +2369,17 @@
                 "info": "The name of the collection within Astra DB where the vectors will be stored.",
                 "load_from_db": false,
                 "name": "collection_name",
-                "options": [],
-                "options_metadata": [],
+                "options": [
+                  "glossarycollection"
+                ],
+                "options_metadata": [
+                  {
+                    "icon": "OpenAI",
+                    "model": "text-embedding-3-small",
+                    "provider": "openai",
+                    "records": 61
+                  }
+                ],
                 "placeholder": "",
                 "real_time_refresh": true,
                 "refresh_button": true,
@@ -2396,7 +2389,7 @@
                 "tool_mode": false,
                 "trace_as_metadata": true,
                 "type": "str",
-                "value": ""
+                "value": "glossarycollection"
               },
               "content_field": {
                 "_input_type": "StrInput",
@@ -2419,7 +2412,7 @@
               },
               "database_name": {
                 "_input_type": "DropdownInput",
-                "advanced": true,
+                "advanced": false,
                 "combobox": true,
                 "dialog_inputs": {
                   "fields": {
@@ -2509,8 +2502,17 @@
                 "info": "The Database name for the Astra DB instance.",
                 "load_from_db": false,
                 "name": "database_name",
-                "options": [],
-                "options_metadata": [],
+                "options": [
+                  "glossary_db"
+                ],
+                "options_metadata": [
+                  {
+                    "api_endpoint": "https://255cbde1-b53f-4dc1-b18b-8f9dbc13d28f-us-east1.apps.astra.datastax.com",
+                    "collections": 1,
+                    "org_id": "5b383438-cd7b-4f2c-aba2-41c497d8c628",
+                    "status": null
+                  }
+                ],
                 "placeholder": "",
                 "real_time_refresh": true,
                 "refresh_button": true,
@@ -2520,7 +2522,7 @@
                 "tool_mode": false,
                 "trace_as_metadata": true,
                 "type": "str",
-                "value": ""
+                "value": "glossary_db"
               },
               "deletion_field": {
                 "_input_type": "StrInput",
@@ -2568,7 +2570,7 @@
               },
               "embedding_model": {
                 "_input_type": "HandleInput",
-                "advanced": false,
+                "advanced": true,
                 "display_name": "Embedding Model",
                 "dynamic": false,
                 "info": "Specify the Embedding Model. Not required for Astra Vectorize collections.",
@@ -2794,7 +2796,7 @@
         "dragging": false,
         "id": "AstraDB-OohCV",
         "measured": {
-          "height": 447,
+          "height": 567,
           "width": 320
         },
         "position": {
@@ -3764,7 +3766,7 @@
                 "input_types": [
                   "Message"
                 ],
-                "load_from_db": false,
+                "load_from_db": true,
                 "name": "api_key",
                 "password": true,
                 "placeholder": "",
@@ -4609,110 +4611,6 @@
       },
       {
         "data": {
-          "id": "TextInput-88eRs",
-          "node": {
-            "base_classes": [
-              "Message"
-            ],
-            "beta": false,
-            "conditional_paths": [],
-            "custom_fields": {},
-            "description": "Get text inputs from the Playground.",
-            "display_name": "Text Input",
-            "documentation": "",
-            "edited": false,
-            "field_order": [
-              "input_value"
-            ],
-            "frozen": false,
-            "icon": "type",
-            "legacy": false,
-            "lf_version": "1.3.2",
-            "metadata": {},
-            "minimized": false,
-            "output_types": [],
-            "outputs": [
-              {
-                "allows_loop": false,
-                "cache": true,
-                "display_name": "Message",
-                "method": "text_response",
-                "name": "text",
-                "selected": "Message",
-                "tool_mode": true,
-                "types": [
-                  "Message"
-                ],
-                "value": "__UNDEFINED__"
-              }
-            ],
-            "pinned": false,
-            "template": {
-              "_type": "Component",
-              "code": {
-                "advanced": true,
-                "dynamic": true,
-                "fileTypes": [],
-                "file_path": "",
-                "info": "",
-                "list": false,
-                "load_from_db": false,
-                "multiline": true,
-                "name": "code",
-                "password": false,
-                "placeholder": "",
-                "required": true,
-                "show": true,
-                "title_case": false,
-                "type": "code",
-                "value": "from langflow.base.io.text import TextComponent\nfrom langflow.io import MultilineInput, Output\nfrom langflow.schema.message import Message\n\n\nclass TextInputComponent(TextComponent):\n    display_name = \"Text Input\"\n    description = \"Get text inputs from the Playground.\"\n    icon = \"type\"\n    name = \"TextInput\"\n\n    inputs = [\n        MultilineInput(\n            name=\"input_value\",\n            display_name=\"Text\",\n            info=\"Text to be passed as input.\",\n        ),\n    ]\n    outputs = [\n        Output(display_name=\"Message\", name=\"text\", method=\"text_response\"),\n    ]\n\n    def text_response(self) -> Message:\n        return Message(\n            text=self.input_value,\n        )\n"
-              },
-              "input_value": {
-                "_input_type": "MultilineInput",
-                "advanced": false,
-                "copy_field": false,
-                "display_name": "Text",
-                "dynamic": false,
-                "info": "Text to be passed as input.",
-                "input_types": [
-                  "Message"
-                ],
-                "list": false,
-                "list_add_label": "Add More",
-                "load_from_db": false,
-                "multiline": true,
-                "name": "input_value",
-                "placeholder": "",
-                "required": false,
-                "show": true,
-                "title_case": false,
-                "tool_mode": false,
-                "trace_as_input": true,
-                "trace_as_metadata": true,
-                "type": "str",
-                "value": ""
-              }
-            },
-            "tool_mode": false
-          },
-          "showNode": true,
-          "type": "TextInput"
-        },
-        "dragging": false,
-        "id": "TextInput-88eRs",
-        "measured": {
-          "height": 229,
-          "width": 320
-        },
-        "position": {
-          "x": 2130.7539521042504,
-          "y": -86.26924965227384
-        },
-        "selected": false,
-        "type": "genericNode"
-      },
-      {
-        "data": {
           "id": "Security Role Selector & Analyzer-wGo0v",
           "node": {
             "base_classes": [
@@ -4739,7 +4637,6 @@
             "frozen": false,
             "icon": "MessagesSquare",
             "legacy": false,
-            "lf_version": "1.3.2",
             "metadata": {},
             "minimized": true,
             "output_types": [],
@@ -4826,7 +4723,7 @@
                 "show": true,
                 "title_case": false,
                 "type": "code",
-                "value": "from langflow.base.data.utils import IMG_FILE_TYPES, TEXT_FILE_TYPES, parse_text_file_to_data\nfrom langflow.base.io.chat import ChatComponent\nfrom langflow.inputs import BoolInput\nfrom langflow.io import (\n    DropdownInput,\n    FileInput,\n    MessageTextInput,\n    MultilineInput,\n    Output,\n)\nfrom langflow.schema.message import Message\n\n\nclass UnifiedChatInput(ChatComponent):\n    display_name = \"Security Role Selector & Analyzer\"\n    description = \"Single module for user input, persona selection, and file upload with processing.\"\n    icon = \"MessagesSquare\"\n    name = \"Security Role Selector & Analyzer\"\n    minimized = True\n\n    inputs = [\n        MultilineInput(\n            name=\"input_value\",\n            display_name=\"Text\",\n            value=\"What would you like to ask or summarize?\",\n            info=\"Message to be passed as input.\",\n            input_types=[],\n        ),\n        BoolInput(\n            name=\"should_store_message\",\n            display_name=\"Store Messages\",\n            info=\"Store the message in the history.\",\n            value=True,\n            advanced=True,\n        ),\n        DropdownInput(\n            name=\"persona\",\n            display_name=\"Persona\",\n            options=[\n                \"Application Security Analyst\",\n                \"Cyber Risk Analyst / CISO / ISO\",\n                \"DLP / Insider Threat Analyst\",\n                \"Malware Analyst\",\n                \"Network Security Analyst\",\n                \"Threat Intelligence Analyst\",\n                \"Vendor Security Specialist\",\n            ],\n            info=\"Please Select a Cybersecurity Persona.\",\n            advanced=False,\n        ),\n        MessageTextInput(\n            name=\"sender_name\",\n            display_name=\"Sender Name\",\n            info=\"Name of the sender.\",\n            value=\"User\",\n            advanced=True,\n        ),\n        MessageTextInput(\n            name=\"session_id\",\n            display_name=\"Session ID\",\n            info=\"The session ID of the chat. If empty, the current session ID parameter will be used.\",\n            advanced=True,\n        ),\n        FileInput(\n            name=\"files\",\n            display_name=\"Files\",\n            file_types=TEXT_FILE_TYPES + IMG_FILE_TYPES,\n            info=\"Files to be sent with the message.\",\n            advanced=False,\n            is_list=False,\n        ),\n        MessageTextInput(\n            name=\"background_color\",\n            display_name=\"Background Color\",\n            info=\"The background color of the icon.\",\n            advanced=True,\n        ),\n        MessageTextInput(\n            name=\"chat_icon\",\n            display_name=\"Icon\",\n            info=\"The icon of the message.\",\n            advanced=True,\n        ),\n        MessageTextInput(\n            name=\"text_color\",\n            display_name=\"Text Color\",\n            info=\"The text color of the name.\",\n            advanced=True,\n        ),\n    ]\n\n    outputs = [\n        Output(display_name=\"Message\", name=\"message\", method=\"message_response\"),\n    ]\n\n    def parse_uploaded_files(self, file_list):\n        \"\"\"Parses uploaded files and returns their text content.\"\"\"\n        parsed_results = []\n        for file in file_list:\n            try:\n                parsed_data = parse_text_file_to_data(file, silent_errors=True)\n                parsed_results.append(parsed_data.text if parsed_data else \"\")\n            except Exception as e:\n                self.log(f\"❌ Failed to parse file {file}: {e}\")\n        return parsed_results\n\n\n\n    async def message_response(self) -> Message:\n        \"\"\"Creates and returns a Message object with attached properties.\"\"\"\n        parsed_files = self.parse_uploaded_files(self.files or [])\n        parsed_file_text = parsed_files[0] if parsed_files else \"\"\n\n        # Collect property values\n        properties = {\n            \"background_color\": self.background_color,\n            \"text_color\": self.text_color,\n            \"icon\": self.chat_icon,\n            \"persona\": self.persona,\n            \"parsed_file\": parsed_file_text,\n        }\n\n        # Strip out any None values\n        properties = {k: v for k, v in properties.items() if v is not None}\n\n        self.log(f\"🧠 Persona in UnifiedChatInput: {self.persona}\")\n        self.log(f\"📎 Parsed file content (first): {parsed_file_text[:100]}...\")  # truncate long logs\n        self.log(f\"📦 Final message properties: {properties}\")\n\n        message = await Message.create(\n            text=(\n                f\"[persona: {self.persona}]\\n\"\n                f\"[parsed_file: {parsed_file_text}]\\n\\n\"\n                f\"{self.input_value}\"\n            ),\n            sender=getattr(self, \"sender\", \"user\"),\n            sender_name=self.sender_name,\n            session_id=self.session_id,\n            files=self.files,\n            properties=properties,\n        )\n\n        self.log(f\"✅ Message created with properties: {list(message.properties.dict().keys())}\")\n        return message\n"
+                "value": "from pdfminer.high_level import extract_text_to_fp\r\nfrom pdfminer.layout import LAParams\r\nimport xml.etree.ElementTree as ET\r\nfrom io import StringIO\r\n\r\nfrom langflow.base.data.utils import IMG_FILE_TYPES, TEXT_FILE_TYPES, parse_text_file_to_data\r\nfrom langflow.base.io.chat import ChatComponent\r\nfrom langflow.inputs import BoolInput\r\nfrom langflow.io import (\r\n    DropdownInput,\r\n    FileInput,\r\n    MessageTextInput,\r\n    MultilineInput,\r\n    Output,\r\n)\r\nfrom langflow.schema.message import Message\r\n\r\n\r\nclass UnifiedChatInput(ChatComponent):\r\n    display_name = \"Security Role Selector & Analyzer\"\r\n    description = \"Single module for user input, persona selection, and file upload with processing.\"\r\n    icon = \"MessagesSquare\"\r\n    name = \"Security Role Selector & Analyzer\"\r\n    minimized = True\r\n\r\n    inputs = [\r\n        MultilineInput(\r\n            name=\"input_value\",\r\n            display_name=\"Text\",\r\n            value=\"What would you like to ask or summarize?\",\r\n            info=\"Message to be passed as input.\",\r\n        ),\r\n        BoolInput(\r\n            name=\"should_store_message\",\r\n            display_name=\"Store Messages\",\r\n            info=\"Store the message in the history.\",\r\n            value=True,\r\n            advanced=True,\r\n        ),\r\n        DropdownInput(\r\n            name=\"persona\",\r\n            display_name=\"Persona\",\r\n            options=[\r\n                \"Application Security Analyst\",\r\n                \"Cyber Risk Analyst / CISO / ISO\",\r\n                \"DLP / Insider Threat Analyst\",\r\n                \"Malware Analyst\",\r\n                \"Network Security Analyst\",\r\n                \"Threat Intelligence Analyst\",\r\n                \"Vendor Security Specialist\",\r\n            ],\r\n            info=\"Please Select a Cybersecurity Persona.\",\r\n        ),\r\n        MessageTextInput(\r\n            name=\"sender_name\",\r\n            display_name=\"Sender Name\",\r\n            info=\"Name of the sender.\",\r\n            value=\"User\",\r\n            advanced=True,\r\n        ),\r\n        MessageTextInput(\r\n            name=\"session_id\",\r\n            display_name=\"Session ID\",\r\n            info=\"The session ID of the chat.\",\r\n            advanced=True,\r\n        ),\r\n        FileInput(\r\n            name=\"files\",\r\n            display_name=\"Files\",\r\n            file_types=TEXT_FILE_TYPES + IMG_FILE_TYPES,\r\n            info=\"Files to be sent with the message.\",\r\n            advanced=False,\r\n            is_list=True,  # ✅ Important!\r\n        ),\r\n        MessageTextInput(\r\n            name=\"background_color\",\r\n            display_name=\"Background Color\",\r\n            info=\"The background color of the icon.\",\r\n            advanced=True,\r\n        ),\r\n        MessageTextInput(\r\n            name=\"chat_icon\",\r\n            display_name=\"Icon\",\r\n            info=\"The icon of the message.\",\r\n            advanced=True,\r\n        ),\r\n        MessageTextInput(\r\n            name=\"text_color\",\r\n            display_name=\"Text Color\",\r\n            info=\"The text color of the name.\",\r\n            advanced=True,\r\n        ),\r\n    ]\r\n\r\n    outputs = [\r\n        Output(display_name=\"Message\", name=\"message\", method=\"message_response\"),\r\n    ]\r\n\r\n    def parse_uploaded_files(self, file_list, silent_errors=True):\r\n        \"\"\"Parses uploaded file paths and returns their text content.\"\"\"\r\n        parsed_results = []\r\n\r\n        for file_path in file_list:\r\n            try:\r\n                if file_path.lower().endswith(\".pdf\"):\r\n                    self.log(f\"📄 Parsing PDF: {file_path}\")\r\n                    text = self.extract_text_from_pdf(file_path)\r\n                else:\r\n                    self.log(f\"📄 Parsing text file: {file_path}\")\r\n                    parsed_data = parse_text_file_to_data(file_path, silent_errors=silent_errors)\r\n                    text = parsed_data.text if parsed_data else \"\"\r\n\r\n                if not text.strip():\r\n                    self.log(f\"⚠️ Warning: parsed text from {file_path} is empty.\")\r\n                parsed_results.append(text)\r\n\r\n            except Exception as e:\r\n                if not silent_errors:\r\n                    self.log(f\"❌ Failed to parse file {file_path}: {e}\")\r\n\r\n        return parsed_results\r\n\r\n    def extract_pdf_as_xml(self, file_path):\r\n        \"\"\"Extract PDF content as layout-preserving XML.\"\"\"\r\n        output = StringIO()\r\n        laparams = LAParams(\r\n            line_margin=0.1,\r\n            char_margin=1.0,\r\n            word_margin=0.1,\r\n            boxes_flow=None,\r\n            all_texts=True,\r\n        )\r\n        with open(file_path, \"rb\") as f:\r\n            extract_text_to_fp(f, output, laparams=laparams, output_type=\"xml\", codec=None)\r\n        return output.getvalue()\r\n\r\n    def convert_pdf_xml_to_structured_text(self, xml_str):\r\n        \"\"\"Convert XML layout output into structured, readable plaintext.\"\"\"\r\n        root = ET.fromstring(xml_str)\r\n        output_lines = []\r\n\r\n        for page in root.findall(\".//page\"):\r\n            text_elements = []\r\n            for textbox in page.findall(\".//textbox\"):\r\n                for textline in textbox.findall(\".//textline\"):\r\n                    line_text = \"\"\r\n                    line_y = None\r\n                    for text in textline.findall(\".//text\"):\r\n                        line_text += text.text or \"\"\r\n                        if line_y is None and \"bbox\" in text.attrib:\r\n                            line_y = float(text.attrib[\"bbox\"].split(\",\")[1])\r\n                    if line_text.strip():\r\n                        text_elements.append((line_y, line_text.strip()))\r\n\r\n            text_elements.sort(reverse=True)  # top-to-bottom\r\n            for _, line in text_elements:\r\n                output_lines.append(line)\r\n            output_lines.append(\"\\n--- End of Page ---\\n\")\r\n\r\n        return \"\\n\".join(output_lines)\r\n\r\n    def extract_text_from_pdf(self, file_path):\r\n        \"\"\"Wrapper for extracting structured text from PDF using XML pipeline.\"\"\"\r\n        try:\r\n            xml_str = self.extract_pdf_as_xml(file_path)\r\n            structured_text = self.convert_pdf_xml_to_structured_text(xml_str)\r\n            self.log(f\"📄 Extracted PDF structured text (preview): {structured_text[:300]}\")\r\n            return structured_text\r\n        except Exception as e:\r\n            self.log(f\"❌ PDF structured parsing failed: {e}\")\r\n            return \"\"\r\n\r\n    async def message_response(self) -> Message:\r\n        \"\"\"Creates and returns a Message object with attached properties.\"\"\"\r\n        parsed_files = self.parse_uploaded_files(self.files or [], silent_errors=True)\r\n        parsed_file_text = parsed_files[0] if parsed_files else \"\"\r\n\r\n        properties = {\r\n            \"background_color\": self.background_color,\r\n            \"text_color\": self.text_color,\r\n            \"icon\": self.chat_icon,\r\n            \"persona\": self.persona,\r\n            \"parsed_file\": parsed_file_text,\r\n        }\r\n        properties = {k: v for k, v in properties.items() if v is not None}\r\n\r\n        self.log(f\"🧠 Persona in UnifiedChatInput: {self.persona}\")\r\n        self.log(f\"📎 Parsed file preview: {parsed_file_text[:100]}...\")\r\n        self.log(f\"📦 Final message properties: {properties}\")\r\n\r\n        message = await Message.create(\r\n            text=(\r\n                f\"[persona: {self.persona}]\\n\"\r\n                f\"[parsed_file: {parsed_file_text}]\\n\\n\"\r\n                f\"{self.input_value}\"\r\n            ),\r\n            sender=\"user\",  # 🔧 Cleaned fallback\r\n            sender_name=self.sender_name,\r\n            session_id=self.session_id,\r\n            files=self.files,\r\n            properties=properties,\r\n        )\r\n\r\n        self.log(f\"✅ Message created with properties: {list(message.properties.dict().keys())}\")\r\n        return message\r\n"
               },
               "files": {
                 "_input_type": "FileInput",
@@ -4858,10 +4755,11 @@
                   "bmp",
                   "image"
                 ],
-                "file_path": "f3a98b60-008b-4bbf-b0d8-228802c249c0/2025-04-22_06-52-03_Flaw in ESET security software used to spread malware from ToddyCat group _ The Record from Recorded Future News.txt",
+                "file_path": "",
                 "info": "Files to be sent with the message.",
-                "list": false,
+                "list": true,
                 "list_add_label": "Add More",
+                "load_from_db": false,
                 "name": "files",
                 "placeholder": "",
                 "required": false,
@@ -4879,7 +4777,9 @@
                 "display_name": "Text",
                 "dynamic": false,
                 "info": "Message to be passed as input.",
-                "input_types": [],
+                "input_types": [
+                  "Message"
+                ],
                 "list": false,
                 "list_add_label": "Add More",
                 "load_from_db": false,
@@ -4922,7 +4822,7 @@
                 "tool_mode": false,
                 "trace_as_metadata": true,
                 "type": "str",
-                "value": "Application Security Analyst"
+                "value": "Threat Intelligence Analyst"
               },
               "sender_name": {
                 "_input_type": "MessageTextInput",
@@ -4952,7 +4852,7 @@
                 "advanced": true,
                 "display_name": "Session ID",
                 "dynamic": false,
-                "info": "The session ID of the chat. If empty, the current session ID parameter will be used.",
+                "info": "The session ID of the chat.",
                 "input_types": [
                   "Message"
                 ],
@@ -5017,6 +4917,7 @@
           "showNode": true,
           "type": "Security Role Selector & Analyzer"
         },
+        "dragging": false,
         "id": "Security Role Selector & Analyzer-wGo0v",
         "measured": {
           "height": 411,
@@ -5026,7 +4927,7 @@
           "x": -3342.093040187524,
           "y": 245.03901085260043
         },
-        "selected": false,
+        "selected": true,
         "type": "genericNode"
       },
       {
@@ -5155,6 +5056,7 @@
             "frozen": false,
             "icon": "merge",
             "legacy": false,
+            "lf_version": "1.3.2",
             "metadata": {},
             "minimized": false,
             "output_types": [],
@@ -5322,6 +5224,7 @@
             "frozen": false,
             "icon": "OpenAI",
             "legacy": false,
+            "lf_version": "1.3.2",
             "metadata": {},
             "minimized": false,
             "output_types": [],
@@ -5592,7 +5495,7 @@
                 "input_types": [
                   "Message"
                 ],
-                "load_from_db": false,
+                "load_from_db": true,
                 "name": "openai_api_key",
                 "password": true,
                 "placeholder": "",
@@ -5818,10 +5721,10 @@
             "beta": false,
             "conditional_paths": [],
             "custom_fields": {},
-            "description": "Scores relevance of Document to chosen Persona",
+            "description": "Compute selected form of similarity between two embedding vectors.",
             "display_name": "Embedding Similarity",
             "documentation": "",
-            "edited": false,
+            "edited": true,
             "field_order": [
               "embedding_vectors",
               "similarity_metric"
@@ -5829,6 +5732,7 @@
             "frozen": false,
             "icon": "equal",
             "legacy": false,
+            "lf_version": "1.3.2",
             "metadata": {},
             "minimized": false,
             "output_types": [],
@@ -5837,8 +5741,11 @@
                 "allows_loop": false,
                 "cache": true,
                 "display_name": "Similarity Data",
+                "hidden": null,
                 "method": "compute_similarity",
                 "name": "similarity_data",
+                "options": null,
+                "required_inputs": null,
                 "selected": "Data",
                 "tool_mode": true,
                 "types": [
@@ -5866,7 +5773,7 @@
                 "show": true,
                 "title_case": false,
                 "type": "code",
-                "value": "import numpy as np\n\nfrom langflow.custom import Component\nfrom langflow.io import DataInput, DropdownInput, Output\nfrom langflow.schema import Data\n\n\nclass EmbeddingSimilarityComponent(Component):\n    display_name: str = \"Embedding Similarity\"\n    description: str = \"Compute selected form of similarity between two embedding vectors.\"\n    icon = \"equal\"\n\n    inputs = [\n        DataInput(\n            name=\"embedding_vectors\",\n            display_name=\"Embedding Vectors\",\n            info=\"A list containing exactly two data objects with embedding vectors to compare.\",\n            is_list=True,\n            required=True,\n        ),\n        DropdownInput(\n            name=\"similarity_metric\",\n            display_name=\"Similarity Metric\",\n            info=\"Select the similarity metric to use.\",\n            options=[\"Cosine Similarity\", \"Euclidean Distance\", \"Manhattan Distance\"],\n            value=\"Cosine Similarity\",\n        ),\n    ]\n\n    outputs = [\n        Output(display_name=\"Similarity Data\", name=\"similarity_data\", method=\"compute_similarity\"),\n    ]\n\n    def compute_similarity(self) -> Data:\n        embedding_vectors: list[Data] = self.embedding_vectors\n\n        # Assert that the list contains exactly two Data objects\n        if len(embedding_vectors) != 2:  # noqa: PLR2004\n            msg = \"Exactly two embedding vectors are required.\"\n            raise ValueError(msg)\n\n        embedding_1 = np.array(embedding_vectors[0].data[\"embeddings\"])\n        embedding_2 = np.array(embedding_vectors[1].data[\"embeddings\"])\n\n        if embedding_1.shape != embedding_2.shape:\n            similarity_score = {\"error\": \"Embeddings must have the same dimensions.\"}\n        else:\n            similarity_metric = self.similarity_metric\n\n            if similarity_metric == \"Cosine Similarity\":\n                score = np.dot(embedding_1, embedding_2) / (np.linalg.norm(embedding_1) * np.linalg.norm(embedding_2))\n                similarity_score = {\"cosine_similarity\": score}\n\n            elif similarity_metric == \"Euclidean Distance\":\n                score = np.linalg.norm(embedding_1 - embedding_2)\n                similarity_score = {\"euclidean_distance\": score}\n\n            elif similarity_metric == \"Manhattan Distance\":\n                score = np.sum(np.abs(embedding_1 - embedding_2))\n                similarity_score = {\"manhattan_distance\": score}\n\n        # Create a Data object to encapsulate the similarity score and additional information\n        similarity_data = Data(\n            data={\n                \"embedding_1\": embedding_vectors[0].data[\"embeddings\"],\n                \"embedding_2\": embedding_vectors[1].data[\"embeddings\"],\n                \"similarity_score\": similarity_score,\n            },\n            text_key=\"similarity_score\",\n        )\n\n        self.status = similarity_data\n        return similarity_data\n"
+                "value": "import numpy as np\n\nfrom langflow.custom import Component\nfrom langflow.io import DataInput, DropdownInput, Output\nfrom langflow.schema import Data\n\n\nclass EmbeddingSimilarityComponent(Component):\n    display_name: str = \"Embedding Similarity\"\n    description: str = \"Compute selected form of similarity between two embedding vectors.\"\n    icon = \"equal\"\n\n    inputs = [\n        DataInput(\n            name=\"embedding_vectors\",\n            display_name=\"Embedding Vectors\",\n            info=\"A list containing exactly two data objects with embedding vectors to compare.\",\n            is_list=True,\n            required=True,\n        ),\n        DropdownInput(\n            name=\"similarity_metric\",\n            display_name=\"Similarity Metric\",\n            info=\"Select the similarity metric to use.\",\n            options=[\"Cosine Similarity\", \"Euclidean Distance\", \"Manhattan Distance\"],\n            value=\"Cosine Similarity\",\n        ),\n    ]\n\n    outputs = [\n        Output(display_name=\"Similarity Data\", name=\"similarity_data\", method=\"compute_similarity\"),\n    ]\n\n    def compute_similarity(self) -> Data:\n        embedding_vectors: list[Data] = self.embedding_vectors\n\n        # Validate input\n        if len(embedding_vectors) != 2:\n            raise ValueError(\"Exactly two embedding vectors are required.\")\n\n        embedding_1 = np.array(embedding_vectors[0].data[\"embeddings\"])\n        embedding_2 = np.array(embedding_vectors[1].data[\"embeddings\"])\n\n        if embedding_1.shape != embedding_2.shape:\n            similarity_score = {\"error\": \"Embeddings must have the same dimensions.\"}\n            score_value = None\n            match_label = \"❌ Error: mismatched dimensions\"\n        else:\n            similarity_metric = self.similarity_metric\n\n            match similarity_metric:\n                case \"Cosine Similarity\":\n                    score_value = float(np.dot(embedding_1, embedding_2) / (np.linalg.norm(embedding_1) * np.linalg.norm(embedding_2)))\n                    similarity_score = {\"cosine_similarity\": score_value}\n\n                    # Rating label\n                    match score_value:\n                        case v if v >= 0.85:\n                            match_label = f\"🟢 Excellent match: {v:.2f}\"\n                        case v if v >= 0.65:\n                            match_label = f\"🟡 Moderate match: {v:.2f}\"\n                        case v if v >= 0.40:\n                            match_label = f\"🟠 Weak match: {v:.2f}\"\n                        case _:\n                            match_label = f\"🔴 Poor match: {score_value:.2f}\"\n\n                case \"Euclidean Distance\":\n                    score_value = float(np.linalg.norm(embedding_1 - embedding_2))\n                    similarity_score = {\"euclidean_distance\": score_value}\n                    match_label = f\"📏 Euclidean distance: {score_value:.2f}\"\n\n                case \"Manhattan Distance\":\n                    score_value = float(np.sum(np.abs(embedding_1 - embedding_2)))\n                    similarity_score = {\"manhattan_distance\": score_value}\n                    match_label = f\"📐 Manhattan distance: {score_value:.2f}\"\n\n                case _:\n                    score_value = None\n                    similarity_score = {\"error\": \"Unsupported metric.\"}\n                    match_label = \"❌ Unknown similarity metric\"\n\n        return Data(\n            data={\n                \"similarity_score\": similarity_score,\n                \"match_rating\": match_label\n            },\n            text_key=\"match_rating\"\n        )\n"
               },
               "embedding_vectors": {
                 "_input_type": "DataInput",
@@ -5954,6 +5861,7 @@
             "frozen": false,
             "icon": "binary",
             "legacy": false,
+            "lf_version": "1.3.2",
             "metadata": {},
             "minimized": false,
             "output_types": [],
@@ -6076,6 +5984,7 @@
             "frozen": false,
             "icon": "binary",
             "legacy": false,
+            "lf_version": "1.3.2",
             "metadata": {},
             "minimized": false,
             "output_types": [],
@@ -6200,6 +6109,7 @@
             "frozen": false,
             "icon": "braces",
             "legacy": false,
+            "lf_version": "1.3.2",
             "metadata": {},
             "minimized": false,
             "output_types": [],
@@ -6368,12 +6278,457 @@
         },
         "selected": false,
         "type": "genericNode"
+      },
+      {
+        "data": {
+          "id": "note-ffzX2",
+          "node": {
+            "description": "# API Access Key Requirements\n## OpenAI\n1. Keyword List\n2. Final Prompt\n3. Text Embedding\n\n## AstraDB\n1. Profile DB\n2. Glossary DB\n\n\n",
+            "display_name": "",
+            "documentation": "",
+            "template": {}
+          },
+          "type": "note"
+        },
+        "dragging": false,
+        "height": 453,
+        "id": "note-ffzX2",
+        "measured": {
+          "height": 453,
+          "width": 325
+        },
+        "position": {
+          "x": -283.2048983165208,
+          "y": -821.0047781969266
+        },
+        "resizing": false,
+        "selected": false,
+        "type": "noteNode",
+        "width": 324
+      },
+      {
+        "data": {
+          "id": "note-Ggry0",
+          "node": {
+            "description": "# Document-Persona Compatibility Scoring\n",
+            "display_name": "",
+            "documentation": "",
+            "template": {
+              "backgroundColor": "blue"
+            }
+          },
+          "type": "note"
+        },
+        "dragging": false,
+        "height": 324,
+        "id": "note-Ggry0",
+        "measured": {
+          "height": 324,
+          "width": 461
+        },
+        "position": {
+          "x": -284.9502146471972,
+          "y": -1422.4978208400248
+        },
+        "resizing": false,
+        "selected": false,
+        "type": "noteNode",
+        "width": 460
+      },
+      {
+        "data": {
+          "id": "note-hyeCR",
+          "node": {
+            "description": "# Persona and Glossary Lookup",
+            "display_name": "",
+            "documentation": "",
+            "template": {
+              "backgroundColor": "blue"
+            }
+          },
+          "type": "note"
+        },
+        "dragging": false,
+        "height": 324,
+        "id": "note-hyeCR",
+        "measured": {
+          "height": 324,
+          "width": 325
+        },
+        "position": {
+          "x": -1303.421172661548,
+          "y": -149.80841501536918
+        },
+        "resizing": false,
+        "selected": false,
+        "type": "noteNode",
+        "width": 324
+      },
+      {
+        "data": {
+          "id": "note-ueB24",
+          "node": {
+            "description": "# Prompt Generation",
+            "display_name": "",
+            "documentation": "",
+            "template": {
+              "backgroundColor": "blue"
+            }
+          },
+          "type": "note"
+        },
+        "id": "note-ueB24",
+        "measured": {
+          "height": 324,
+          "width": 325
+        },
+        "position": {
+          "x": 853.4841242383551,
+          "y": -437.07525726726976
+        },
+        "selected": false,
+        "type": "noteNode"
+      },
+      {
+        "data": {
+          "id": "note-fmPrl",
+          "node": {
+            "description": "# User Request Ingest\n",
+            "display_name": "",
+            "documentation": "",
+            "template": {
+              "backgroundColor": "blue"
+            }
+          },
+          "type": "note"
+        },
+        "dragging": false,
+        "height": 324,
+        "id": "note-fmPrl",
+        "measured": {
+          "height": 324,
+          "width": 325
+        },
+        "position": {
+          "x": -2413.333943980747,
+          "y": 175.77675095207582
+        },
+        "resizing": false,
+        "selected": false,
+        "type": "noteNode",
+        "width": 324
+      },
+      {
+        "data": {
+          "id": "ChatOutput-AJXQh",
+          "node": {
+            "base_classes": [
+              "Message"
+            ],
+            "beta": false,
+            "conditional_paths": [],
+            "custom_fields": {},
+            "description": "Display a chat message in the Playground.",
+            "display_name": "Chat Output",
+            "documentation": "",
+            "edited": false,
+            "field_order": [
+              "input_value",
+              "should_store_message",
+              "sender",
+              "sender_name",
+              "session_id",
+              "data_template",
+              "background_color",
+              "chat_icon",
+              "text_color",
+              "clean_data"
+            ],
+            "frozen": false,
+            "icon": "MessagesSquare",
+            "legacy": false,
+            "metadata": {},
+            "minimized": true,
+            "output_types": [],
+            "outputs": [
+              {
+                "allows_loop": false,
+                "cache": true,
+                "display_name": "Message",
+                "method": "message_response",
+                "name": "message",
+                "selected": "Message",
+                "tool_mode": true,
+                "types": [
+                  "Message"
+                ],
+                "value": "__UNDEFINED__"
+              }
+            ],
+            "pinned": false,
+            "template": {
+              "_type": "Component",
+              "background_color": {
+                "_input_type": "MessageTextInput",
+                "advanced": true,
+                "display_name": "Background Color",
+                "dynamic": false,
+                "info": "The background color of the icon.",
+                "input_types": [
+                  "Message"
+                ],
+                "list": false,
+                "list_add_label": "Add More",
+                "load_from_db": false,
+                "name": "background_color",
+                "placeholder": "",
+                "required": false,
+                "show": true,
+                "title_case": false,
+                "tool_mode": false,
+                "trace_as_input": true,
+                "trace_as_metadata": true,
+                "type": "str",
+                "value": ""
+              },
+              "chat_icon": {
+                "_input_type": "MessageTextInput",
+                "advanced": true,
+                "display_name": "Icon",
+                "dynamic": false,
+                "info": "The icon of the message.",
+                "input_types": [
+                  "Message"
+                ],
+                "list": false,
+                "list_add_label": "Add More",
+                "load_from_db": false,
+                "name": "chat_icon",
+                "placeholder": "",
+                "required": false,
+                "show": true,
+                "title_case": false,
+                "tool_mode": false,
+                "trace_as_input": true,
+                "trace_as_metadata": true,
+                "type": "str",
+                "value": ""
+              },
+              "clean_data": {
+                "_input_type": "BoolInput",
+                "advanced": true,
+                "display_name": "Basic Clean Data",
+                "dynamic": false,
+                "info": "Whether to clean the data",
+                "list": false,
+                "list_add_label": "Add More",
+                "name": "clean_data",
+                "placeholder": "",
+                "required": false,
+                "show": true,
+                "title_case": false,
+                "tool_mode": false,
+                "trace_as_metadata": true,
+                "type": "bool",
+                "value": true
+              },
+              "code": {
+                "advanced": true,
+                "dynamic": true,
+                "fileTypes": [],
+                "file_path": "",
+                "info": "",
+                "list": false,
+                "load_from_db": false,
+                "multiline": true,
+                "name": "code",
+                "password": false,
+                "placeholder": "",
+                "required": true,
+                "show": true,
+                "title_case": false,
+                "type": "code",
+                "value": "from collections.abc import Generator\nfrom typing import Any\n\nfrom langflow.base.io.chat import ChatComponent\nfrom langflow.inputs import BoolInput\nfrom langflow.inputs.inputs import HandleInput\nfrom langflow.io import DropdownInput, MessageTextInput, Output\nfrom langflow.schema.data import Data\nfrom langflow.schema.dataframe import DataFrame\nfrom langflow.schema.message import Message\nfrom langflow.schema.properties import Source\nfrom langflow.utils.constants import (\n    MESSAGE_SENDER_AI,\n    MESSAGE_SENDER_NAME_AI,\n    MESSAGE_SENDER_USER,\n)\n\n\nclass ChatOutput(ChatComponent):\n    display_name = \"Chat Output\"\n    description = \"Display a chat message in the Playground.\"\n    icon = \"MessagesSquare\"\n    name = \"ChatOutput\"\n    minimized = True\n\n    inputs = [\n        HandleInput(\n            name=\"input_value\",\n            display_name=\"Text\",\n            info=\"Message to be passed as output.\",\n            input_types=[\"Data\", \"DataFrame\", \"Message\"],\n            required=True,\n        ),\n        BoolInput(\n            name=\"should_store_message\",\n            display_name=\"Store Messages\",\n            info=\"Store the message in the history.\",\n            value=True,\n            advanced=True,\n        ),\n        DropdownInput(\n            name=\"sender\",\n            display_name=\"Sender Type\",\n            options=[MESSAGE_SENDER_AI, MESSAGE_SENDER_USER],\n            value=MESSAGE_SENDER_AI,\n            advanced=True,\n            info=\"Type of sender.\",\n        ),\n        MessageTextInput(\n            name=\"sender_name\",\n            display_name=\"Sender Name\",\n            info=\"Name of the sender.\",\n            value=MESSAGE_SENDER_NAME_AI,\n            advanced=True,\n        ),\n        MessageTextInput(\n            name=\"session_id\",\n            display_name=\"Session ID\",\n            info=\"The session ID of the chat. If empty, the current session ID parameter will be used.\",\n            advanced=True,\n        ),\n        MessageTextInput(\n            name=\"data_template\",\n            display_name=\"Data Template\",\n            value=\"{text}\",\n            advanced=True,\n            info=\"Template to convert Data to Text. If left empty, it will be dynamically set to the Data's text key.\",\n        ),\n        MessageTextInput(\n            name=\"background_color\",\n            display_name=\"Background Color\",\n            info=\"The background color of the icon.\",\n            advanced=True,\n        ),\n        MessageTextInput(\n            name=\"chat_icon\",\n            display_name=\"Icon\",\n            info=\"The icon of the message.\",\n            advanced=True,\n        ),\n        MessageTextInput(\n            name=\"text_color\",\n            display_name=\"Text Color\",\n            info=\"The text color of the name\",\n            advanced=True,\n        ),\n        BoolInput(\n            name=\"clean_data\",\n            display_name=\"Basic Clean Data\",\n            value=True,\n            info=\"Whether to clean the data\",\n            advanced=True,\n        ),\n    ]\n    outputs = [\n        Output(\n            display_name=\"Message\",\n            name=\"message\",\n            method=\"message_response\",\n        ),\n    ]\n\n    def _build_source(self, id_: str | None, display_name: str | None, source: str | None) -> Source:\n        source_dict = {}\n        if id_:\n            source_dict[\"id\"] = id_\n        if display_name:\n            source_dict[\"display_name\"] = display_name\n        if source:\n            # Handle case where source is a ChatOpenAI object\n            if hasattr(source, \"model_name\"):\n                source_dict[\"source\"] = source.model_name\n            elif hasattr(source, \"model\"):\n                source_dict[\"source\"] = str(source.model)\n            else:\n                source_dict[\"source\"] = str(source)\n        return Source(**source_dict)\n\n    async def message_response(self) -> Message:\n        # First convert the input to string if needed\n        text = self.convert_to_string()\n        # Get source properties\n        source, icon, display_name, source_id = self.get_properties_from_source_component()\n        background_color = self.background_color\n        text_color = self.text_color\n        if self.chat_icon:\n            icon = self.chat_icon\n\n        # Create or use existing Message object\n        if isinstance(self.input_value, Message):\n            message = self.input_value\n            # Update message properties\n            message.text = text\n        else:\n            message = Message(text=text)\n\n        # Set message properties\n        message.sender = self.sender\n        message.sender_name = self.sender_name\n        message.session_id = self.session_id\n        message.flow_id = self.graph.flow_id if hasattr(self, \"graph\") else None\n        message.properties.source = self._build_source(source_id, display_name, source)\n        message.properties.icon = icon\n        message.properties.background_color = background_color\n        message.properties.text_color = text_color\n\n        # Store message if needed\n        if self.session_id and self.should_store_message:\n            stored_message = await self.send_message(message)\n            self.message.value = stored_message\n            message = stored_message\n\n        self.status = message\n        return message\n\n    def _validate_input(self) -> None:\n        \"\"\"Validate the input data and raise ValueError if invalid.\"\"\"\n        if self.input_value is None:\n            msg = \"Input data cannot be None\"\n            raise ValueError(msg)\n        if isinstance(self.input_value, list) and not all(\n            isinstance(item, Message | Data | DataFrame | str) for item in self.input_value\n        ):\n            invalid_types = [\n                type(item).__name__\n                for item in self.input_value\n                if not isinstance(item, Message | Data | DataFrame | str)\n            ]\n            msg = f\"Expected Data or DataFrame or Message or str, got {invalid_types}\"\n            raise TypeError(msg)\n        if not isinstance(\n            self.input_value,\n            Message | Data | DataFrame | str | list | Generator | type(None),\n        ):\n            type_name = type(self.input_value).__name__\n            msg = f\"Expected Data or DataFrame or Message or str, Generator or None, got {type_name}\"\n            raise TypeError(msg)\n\n    def _safe_convert(self, data: Any) -> str:\n        \"\"\"Safely convert input data to string.\"\"\"\n        try:\n            if isinstance(data, str):\n                return data\n            if isinstance(data, Message):\n                return data.get_text()\n            if isinstance(data, Data):\n                if data.get_text() is None:\n                    msg = \"Empty Data object\"\n                    raise ValueError(msg)\n                return data.get_text()\n            if isinstance(data, DataFrame):\n                if self.clean_data:\n                    # Remove empty rows\n                    data = data.dropna(how=\"all\")\n                    # Remove empty lines in each cell\n                    data = data.replace(r\"^\\s*$\", \"\", regex=True)\n                    # Replace multiple newlines with a single newline\n                    data = data.replace(r\"\\n+\", \"\\n\", regex=True)\n\n                # Replace pipe characters to avoid markdown table issues\n                processed_data = data.replace(r\"\\|\", r\"\\\\|\", regex=True)\n\n                processed_data = processed_data.map(\n                    lambda x: str(x).replace(\"\\n\", \"<br/>\") if isinstance(x, str) else x\n                )\n\n                return processed_data.to_markdown(index=False)\n            return str(data)\n        except (ValueError, TypeError, AttributeError) as e:\n            msg = f\"Error converting data: {e!s}\"\n            raise ValueError(msg) from e\n\n    def convert_to_string(self) -> str | Generator[Any, None, None]:\n        \"\"\"Convert input data to string with proper error handling.\"\"\"\n        self._validate_input()\n        if isinstance(self.input_value, list):\n            return \"\\n\".join([self._safe_convert(item) for item in self.input_value])\n        if isinstance(self.input_value, Generator):\n            return self.input_value\n        return self._safe_convert(self.input_value)\n"
+              },
+              "data_template": {
+                "_input_type": "MessageTextInput",
+                "advanced": true,
+                "display_name": "Data Template",
+                "dynamic": false,
+                "info": "Template to convert Data to Text. If left empty, it will be dynamically set to the Data's text key.",
+                "input_types": [
+                  "Message"
+                ],
+                "list": false,
+                "list_add_label": "Add More",
+                "load_from_db": false,
+                "name": "data_template",
+                "placeholder": "",
+                "required": false,
+                "show": true,
+                "title_case": false,
+                "tool_mode": false,
+                "trace_as_input": true,
+                "trace_as_metadata": true,
+                "type": "str",
+                "value": "{text}"
+              },
+              "input_value": {
+                "_input_type": "HandleInput",
+                "advanced": false,
+                "display_name": "Text",
+                "dynamic": false,
+                "info": "Message to be passed as output.",
+                "input_types": [
+                  "Data",
+                  "DataFrame",
+                  "Message"
+                ],
+                "list": false,
+                "list_add_label": "Add More",
+                "name": "input_value",
+                "placeholder": "",
+                "required": true,
+                "show": true,
+                "title_case": false,
+                "trace_as_metadata": true,
+                "type": "other",
+                "value": ""
+              },
+              "sender": {
+                "_input_type": "DropdownInput",
+                "advanced": true,
+                "combobox": false,
+                "dialog_inputs": {},
+                "display_name": "Sender Type",
+                "dynamic": false,
+                "info": "Type of sender.",
+                "name": "sender",
+                "options": [
+                  "Machine",
+                  "User"
+                ],
+                "options_metadata": [],
+                "placeholder": "",
+                "required": false,
+                "show": true,
+                "title_case": false,
+                "tool_mode": false,
+                "trace_as_metadata": true,
+                "type": "str",
+                "value": "Machine"
+              },
+              "sender_name": {
+                "_input_type": "MessageTextInput",
+                "advanced": true,
+                "display_name": "Sender Name",
+                "dynamic": false,
+                "info": "Name of the sender.",
+                "input_types": [
+                  "Message"
+                ],
+                "list": false,
+                "list_add_label": "Add More",
+                "load_from_db": false,
+                "name": "sender_name",
+                "placeholder": "",
+                "required": false,
+                "show": true,
+                "title_case": false,
+                "tool_mode": false,
+                "trace_as_input": true,
+                "trace_as_metadata": true,
+                "type": "str",
+                "value": "AI"
+              },
+              "session_id": {
+                "_input_type": "MessageTextInput",
+                "advanced": true,
+                "display_name": "Session ID",
+                "dynamic": false,
+                "info": "The session ID of the chat. If empty, the current session ID parameter will be used.",
+                "input_types": [
+                  "Message"
+                ],
+                "list": false,
+                "list_add_label": "Add More",
+                "load_from_db": false,
+                "name": "session_id",
+                "placeholder": "",
+                "required": false,
+                "show": true,
+                "title_case": false,
+                "tool_mode": false,
+                "trace_as_input": true,
+                "trace_as_metadata": true,
+                "type": "str",
+                "value": ""
+              },
+              "should_store_message": {
+                "_input_type": "BoolInput",
+                "advanced": true,
+                "display_name": "Store Messages",
+                "dynamic": false,
+                "info": "Store the message in the history.",
+                "list": false,
+                "list_add_label": "Add More",
+                "name": "should_store_message",
+                "placeholder": "",
+                "required": false,
+                "show": true,
+                "title_case": false,
+                "tool_mode": false,
+                "trace_as_metadata": true,
+                "type": "bool",
+                "value": true
+              },
+              "text_color": {
+                "_input_type": "MessageTextInput",
+                "advanced": true,
+                "display_name": "Text Color",
+                "dynamic": false,
+                "info": "The text color of the name",
+                "input_types": [
+                  "Message"
+                ],
+                "list": false,
+                "list_add_label": "Add More",
+                "load_from_db": false,
+                "name": "text_color",
+                "placeholder": "",
+                "required": false,
+                "show": true,
+                "title_case": false,
+                "tool_mode": false,
+                "trace_as_input": true,
+                "trace_as_metadata": true,
+                "type": "str",
+                "value": ""
+              }
+            },
+            "tool_mode": false
+          },
+          "showNode": false,
+          "type": "ChatOutput"
+        },
+        "dragging": false,
+        "id": "ChatOutput-AJXQh",
+        "measured": {
+          "height": 66,
+          "width": 192
+        },
+        "position": {
+          "x": 2275.3776217309987,
+          "y": -127.15724575254843
+        },
+        "selected": false,
+        "type": "genericNode"
       }
     ],
     "viewport": {
-      "x": 674.1312603239951,
-      "y": 629.5219382432491,
-      "zoom": 0.4016343655244516
+      "x": 1849.6759363787487,
+      "y": 525.621608729515,
+      "zoom": 0.4948154665398356
     }
   },
   "description": "Load your data for chat context with Retrieval Augmented Generation.",
@@ -6381,6 +6736,6 @@
   "id": "f3a98b60-008b-4bbf-b0d8-228802c249c0",
   "is_component": false,
   "last_tested_version": "1.3.2",
-  "name": "Fidelity Group - Cybersecurity Persona Based RAG",
+  "name": "Cybersecurity Persona RAG - v1.0",
   "tags": null
 }
