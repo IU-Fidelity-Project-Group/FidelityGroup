@@ -103,90 +103,85 @@ generate = st.sidebar.button("Generate Summary")
 if generate:
     if not uploaded_file:
         st.sidebar.warning("Please upload a file first.")
-    else:
-        with st.spinner("Extracting text..."):
-            name = uploaded_file.name.lower()
-            if name.endswith(".zip"):
-                document_text = extract_text_from_zip(uploaded_file)
-            else:
-                try:
-                    document_text = extract_text_from_pdf(uploaded_file)
-                except PdfReadError as e:
-                    st.sidebar.error(f"PDF parse error: {e}")
-                    st.stop()
+        st.stop()
 
-        # Truncate to fit under token-per-minute limits
-        encoder = tiktoken.encoding_for_model("gpt-4o")
-        sys_tokens = len(encoder.encode(DESCRIPTIONS[persona]))
-        preamble = "Document content:\n\n"
-        postamble = f"\n\nPlease provide a detailed summary for a {persona}, using up to {max_toks} tokens."
-        overhead_tokens = (
+    name = uploaded_file.name.lower()
+    encoder = tiktoken.encoding_for_model("gpt-4o")
+
+    # Helper to truncate text to fit under our token‑per‑minute budget
+    def truncate_text(text: str, persona_desc: str, max_toks: int) -> str:
+        sys_tokens = len(encoder.encode(persona_desc))
+        preamble   = "Document content:\n\n"
+        postamble  = f"\n\nPlease summarize for a {persona}, using up to {max_toks} tokens."
+        overhead   = (
             sys_tokens
             + len(encoder.encode(preamble))
             + len(encoder.encode(postamble))
             + max_toks
             + 50
         )
-        tpm_limit = 30000
-        allowed_doc_tokens = max(0, tpm_limit - overhead_tokens)
+        tpm_limit        = 30_000
+        allowed_doc_tok  = max(0, tpm_limit - overhead)
 
-        doc_tokens = encoder.encode(document_text)
-        if len(doc_tokens) > allowed_doc_tokens:
-            doc_tokens = doc_tokens[:allowed_doc_tokens]
-            document_text = encoder.decode(doc_tokens)
-            st.warning(
-                f"⚠️ Input was too long and has been truncated to ~{allowed_doc_tokens} tokens."
-            )
+        doc_tokens = encoder.encode(text)
+        if len(doc_tokens) > allowed_doc_tok:
+            st.warning(f"⚠️ Input was too long and has been truncated to ~{allowed_doc_tok} tokens.")
+            doc_tokens = doc_tokens[:allowed_doc_tok]
+            return encoder.decode(doc_tokens)
+        return text
 
-        system_msg = {"role": "system", "content": DESCRIPTIONS[persona]}
-        user_msg = {
-            "role": "user",
-            "content": (
-                f"Document content:\n\n{document_text}\n\n"
-                f"Please provide a detailed summary for a {persona}, "
-                f"using up to {max_toks} tokens."
-            ),
-        }
+    # ZIP branch
+    if name.endswith(".zip"):
+        # extract
+        extracted_docs = {}
+        with zipfile.ZipFile(uploaded_file) as z:
+            for pdf_name in z.namelist():
+                if pdf_name.lower().endswith(".pdf"):
+                    with z.open(pdf_name) as f:
+                        raw = extract_text_from_pdf(f)
+                        extracted_docs[pdf_name] = truncate_text(raw, DESCRIPTIONS[persona], max_toks)
 
-        try:
+        # summarize
+        summary_by_pdf = {}
+        for pdf_name, pdf_text in extracted_docs.items():
             resp = openai_client.chat.completions.create(
                 model="gpt-4o",
-                messages=[system_msg, user_msg],
+                messages=[
+                    {"role": "system", "content": DESCRIPTIONS[persona]},
+                    {"role": "user",   "content": f"Document content:\n\n{pdf_text}\n\nPlease summarize for a {persona}."},
+                ],
                 max_tokens=max_toks,
             )
-            summary = resp.choices[0].message.content
-            if name.endswith(".zip"):
-                # when you detect a ZIP:
-                extracted_docs = {}
-                with zipfile.ZipFile(uploaded_file) as z:
-                    for pdf_name in z.namelist():
-                        if pdf_name.lower().endswith(".pdf"):
-                            with z.open(pdf_name) as f:
-                                 extracted_docs[pdf_name] = extract_text_from_pdf(f)
+            summary_by_pdf[pdf_name] = resp.choices[0].message.content
 
-    # then, before the display block, run the summarization per file:
-    summary_by_pdf = {}
-    for pdf_name, pdf_text in extracted_docs.items():
-        resp = openai_client.chat.completions.create(
-            model="gpt-4o",
-            messages=[
-                {"role": "system", "content": DESCRIPTIONS[persona]},
-                {"role": "user",   "content": f"Document content:\n\n{pdf_text}\n\nPlease summarize for a {persona}."},
-            ],
-            max_tokens=max_toks,
-        )
-        summary_by_pdf[pdf_name] = resp.choices[0].message.content
-            else:
-                # Single‑PDF case: use the uploaded filename
-                if name.endswith(".zip"):
-                    for pdf_name, _ in extracted_docs.items():
-                        st.subheader(pdf_name)                       # ← PDF title
-                        st.write(summary_by_pdf[pdf_name])
-                else:
-                    st.subheader(uploaded_file.name)                 # ← single‐file title
-                    st.write(summary)
+        # display
+        for pdf_name, summ in summary_by_pdf.items():
+            st.subheader(pdf_name)
+            st.write(summ)
+
+    # Single‑PDF branch
+    else:
+        with st.spinner("Extracting text…"):
+            raw = extract_text_from_pdf(uploaded_file)
+            document_text = truncate_text(raw, DESCRIPTIONS[persona], max_toks)
+
+        system_msg = {"role": "system", "content": DESCRIPTIONS[persona]}
+        user_msg   = {"role": "user",   "content": f"Document content:\n\n{document_text}\n\nPlease summarize for a {persona}."}
+
+        try:
+            resp    = openai_client.chat.completions.create(
+                         model="gpt-4o",
+                         messages=[system_msg, user_msg],
+                         max_tokens=max_toks,
+                     )
+            summary = resp.choices[0].message.content
+
+            st.subheader(uploaded_file.name)
+            st.write(summary)
+
         except Exception as e:
-                st.error(f"OpenAI error: {e}")
+            st.error(f"OpenAI error: {e}")
+
 
 # --------------------
 # Feedback stub
