@@ -70,6 +70,16 @@ uploaded_file = st.sidebar.file_uploader(
     type=["pdf"],
     help="Max size: ~200 MB",
 )
+
+max_toks = st.sidebar.slider(
+    "Max summary length (tokens)",
+    min_value=100,
+    max_value=2000,
+    value=500,
+    step=100,
+)
+
+
 generate = st.sidebar.button("Generate Summary")
 
 # Handle generation
@@ -93,6 +103,7 @@ if generate:
             resp = openai_client.chat.completions.create(
                 model="gpt-4o",
                 messages=[system_msg, user_msg],
+                max_tokens=max_toks,
             )
             summary = resp.choices[0].message.content
             st.subheader("Summary Output")
