@@ -1,90 +1,104 @@
-import os
 import streamlit as st
-import openai
-from pypdf import PdfReader
+from openai import OpenAI
+from PyPDF2 import PdfReader
 
-# --------------------
-# Configuration & Secrets
-# --------------------
-# Load OpenAI API key securely
-openai.api_key = st.secrets["openai"]["api_key"]
 
-# --------------------
-# Persona Definitions
-# --------------------
-personas = {
-    "SOC Analyst": "You are a SOC Analyst. Summarize focusing on threat indicators and incident triage.",
-    "CISO": "You are a CISO. Summarize focusing on high-level risks and strategic security decisions.",
-    "Compliance Officer": "You are a Compliance Officer. Summarize focusing on policy compliance and regulatory gaps.",
-    "Privacy Engineer": "You are a Privacy Engineer. Summarize focusing on data handling and privacy implications.",
-    "Vendor Security Specialist": "Vendor security specialists are responsible for assessing and managing the cybersecurity posture of third-party vendors as well as the vendor’s products and services. They identify vulnerabilities, manage vendor audits, and enforce security clauses in contracts.",
-    "Network Security Analyst": "Network Security Analysts secure data transmission within an organization’s IT infrastructure, including cloud and on-prem environments. They manage firewalls, IDS/IPS, VPNs, network segmentation, and zero-trust architecture.",
-    "Cyber Risk Analyst / CISO / ISO": "Cyber Risk Analysts identify and prioritize risks to the organization’s IT environment. CISOs and ISOs oversee cybersecurity policy, compliance (e.g., GDPR), incident response, and align security with business goals.",
-    "Application Security Analyst": "Application Security Analysts focus on secure coding practices, vulnerabilities in development frameworks, and CI/CD pipeline security. They monitor OWASP Top 10, SSRF, code injection, and buffer overflow threats.",
-    "Threat Intelligence Analyst": "Threat Intelligence Analysts track evolving threat actor TTPs, analyze supply chain attacks, MITRE ATT&CK mappings, and collaborate with intelligence sources.",
-    "DLP / Insider Threat Analyst": "DLP and Insider Threat Analysts focus on internal data misuse, policy failures, and behavioral indicators. They enforce DLP policies, monitor privilege misuse, and use UEBA for insider threat detection.",
-    "Malware Analyst": "Malware Analysts reverse engineer malware, study payload behavior, and identify obfuscation techniques. They use tools like YARA and Ghidra to analyze ransomware, trojans, and C2 structures."
+openai_client = OpenAI(api_key=st.secrets["openai"]["api_key"])
+
+# Predefined persona descriptions
+DESCRIPTIONS = {
+    "Vendor Security Specialist": (
+        "Vendor security specialists are responsible for assessing and managing the cybersecurity posture of "
+        "third‑party vendors as well as the vendor’s products and services. They focus on integrations, data "
+        "security practices, SOC 2 and ISO 27001 compliance, vendor audits, and security clauses in contracts."
+    ),
+    "Network Security Analyst": (
+        "Network Security Analysts secure data transmission within an organization’s IT infrastructure, including "
+        "cloud and on‑prem environments. Responsibilities include firewalls, IDS/IPS, VPNs, network segmentation, "
+        "zero‑trust architecture, traffic monitoring, access controls, and incident response."
+    ),
+    "Cyber Risk Analyst / CISO / ISO": (
+        "Cyber Risk Analysts identify and prioritize risks to the organization’s IT environment. CISOs and ISOs oversee "
+        "strategic direction of cybersecurity policies, ensure regulatory compliance (e.g. GDPR), lead incident response, "
+        "crisis management, and align security practices with business objectives."
+    ),
+    "Application Security Analyst": (
+        "Application Security Analysts focus on secure coding practices, identify vulnerabilities in development frameworks, "
+        "monitor the OWASP Top 10 and zero‑day threats, and integrate SAST/DAST tools into CI/CD pipelines."
+    ),
+    "Threat Intelligence Analyst": (
+        "Threat Intelligence Analysts track evolving threat actor TTPs, especially those targeting financial systems. "
+        "They analyze supply chain attacks, use MITRE ATT&CK, monitor initial access and lateral movement, "
+        "and collaborate with sources like FS‑ISAC."
+    ),
+    "DLP / Insider Threat Analyst": (
+        "DLP and Insider Threat Analysts monitor internal data misuse, detect policy failures, USB/file transfers, "
+        "shadow IT activities, and enforce DLP policies using UEBA platforms."
+    ),
+    "Malware Analyst": (
+        "Malware Analysts reverse‑engineer malware, study payload behavior, track new strains, use YARA and Ghidra, "
+        "and analyze IOCs to understand ransomware, trojans, and C2 frameworks."
+    ),
 }
 
-# --------------------
-# Helper Functions
-# --------------------
-def extract_text(uploaded_file):
-    """
-    Extract text from uploaded file. PDFs via pypdf, others via raw decode.
-    """
-    try:
-        if uploaded_file.type == "application/pdf":
-            reader = PdfReader(uploaded_file)
-            texts = []
-            for page in reader.pages:
-                text = page.extract_text()
-                if text:
-                    texts.append(text)
-            return "\n".join(texts)
-    except Exception as e:
-        st.error(f"PDF parsing failed: {e}")
-        return ""
-    # Fallback for text files and others
-    try:
-        return uploaded_file.read().decode("utf-8", errors="ignore")
-    except Exception:
-        return str(uploaded_file.read())
+st.title("Cybersecurity Persona–Based Summarizer")
 
-# --------------------
-# Streamlit App UI
-# --------------------
-st.set_page_config(page_title="Persona-Based Summarizer", layout="wide")
-st.title("Cybersecurity Persona-Based Summarizer")
+# 1) Persona selector
+persona = st.selectbox("Select Persona", list(DESCRIPTIONS.keys()))
 
-uploaded_file = st.file_uploader("Upload a document", type=["pdf", "txt", "docx"])
-selected_persona = st.selectbox("Select Persona", list(personas.keys()))
+# 2) PDF uploader
+uploaded_file = st.file_uploader(
+    "Upload a PDF document",
+    type=["pdf"],
+    help="Max size: ~200 MB",
+)
 
-if uploaded_file and st.button("Generate Summary"):
-    with st.spinner("Extracting content..."):
-        document_text = extract_text(uploaded_file)
+def extract_text_from_pdf(file) -> str:
+    reader = PdfReader(file)
+    text_chunks = []
+    for page in reader.pages:
+        txt = page.extract_text()
+        if txt:
+            text_chunks.append(txt)
+    return "\n\n".join(text_chunks)
 
-    prompt = f"{personas[selected_persona]}\n\n{document_text}"
+# 3) Generate summary
+if st.button("Generate Summary"):
+    if not uploaded_file:
+        st.warning("Please upload a PDF first.")
+    else:
+        with st.spinner("Extracting text…"):
+            document_text = extract_text_from_pdf(uploaded_file)
 
-    with st.spinner("Generating summary..."):
+        # Build messages
+        system_msg = {"role": "system", "content": DESCRIPTIONS[persona]}
+        user_msg = {
+            "role": "user",
+            "content": (
+                f"Here is the document content:\n\n{document_text}\n\n"
+                f"Please summarize it for a {persona}."
+            ),
+        }
+
         try:
-            response = openai.ChatCompletion.create(
+            resp = openai_client.chat.completions.create(
                 model="gpt-4o",
-                messages=[{"role": "user", "content": prompt}],
-                temperature=0.3,
-                max_tokens=500
+                messages=[system_msg, user_msg],
             )
-            summary = response.choices[0].message.content
+            summary = resp.choices[0].message.content
+            st.subheader("Summary Output")
+            st.write(summary)
         except Exception as e:
             st.error(f"OpenAI error: {e}")
-            summary = ""
 
-    st.subheader("Summary Output")
-    st.text_area("", value=summary, height=300)
+# 4) Simple rating UI
+st.markdown("---")
+st.subheader("Rate this summary")
+rating = st.radio("Stars", [1, 2, 3, 4, 5], index=4, key="rating")
+comment = st.text_area("Additional comments", key="comment")
 
-    st.markdown("---")
-    st.subheader("Rate This Summary")
-    rating = st.slider("Rate this summary (1 = poor, 5 = excellent)", 1, 5, 3)
-    feedback = st.text_area("Optional feedback:", placeholder="What did you like or what could be improved?", height=80)
-    if st.button("Submit Feedback"):
-        st.success(f"Thanks for your feedback! You rated this summary {rating} stars.")
+if st.button("Submit Feedback"):
+    # Placeholder: hook into your storage of choice later
+    st.success(f"Thanks! You rated this {rating} star(s).")
+    if comment:
+        st.info(f"Your comment: “{comment}”")
