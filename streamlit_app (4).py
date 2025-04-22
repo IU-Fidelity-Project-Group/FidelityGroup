@@ -156,13 +156,35 @@ if generate:
             )
             summary = resp.choices[0].message.content
             if name.endswith(".zip"):
-                for pdf_name, pdf_text in extracted_docs.items():
-                    st.subheader(pdf_name)        # ← here’s the title of each PDF
-                    st.write(summary_by_pdf[pdf_name])
+                # when you detect a ZIP:
+                extracted_docs = {}
+                with zipfile.ZipFile(uploaded_file) as z:
+                    for pdf_name in z.namelist():
+                        if pdf_name.lower().endswith(".pdf"):
+                            with z.open(pdf_name) as f:
+                                 extracted_docs[pdf_name] = extract_text_from_pdf(f)
+
+    # then, before the display block, run the summarization per file:
+    summary_by_pdf = {}
+    for pdf_name, pdf_text in extracted_docs.items():
+        resp = openai_client.chat.completions.create(
+            model="gpt-4o",
+            messages=[
+                {"role": "system", "content": DESCRIPTIONS[persona]},
+                {"role": "user",   "content": f"Document content:\n\n{pdf_text}\n\nPlease summarize for a {persona}."},
+            ],
+            max_tokens=max_toks,
+        )
+        summary_by_pdf[pdf_name] = resp.choices[0].message.content
             else:
                 # Single‑PDF case: use the uploaded filename
-                st.subheader(uploaded_file.name)  # ← here’s your single file’s title
-                st.write(summary)
+                if name.endswith(".zip"):
+                    for pdf_name, _ in extracted_docs.items():
+                        st.subheader(pdf_name)                       # ← PDF title
+                        st.write(summary_by_pdf[pdf_name])
+                else:
+                    st.subheader(uploaded_file.name)                 # ← single‐file title
+                    st.write(summary)
         except Exception as e:
                 st.error(f"OpenAI error: {e}")
 
