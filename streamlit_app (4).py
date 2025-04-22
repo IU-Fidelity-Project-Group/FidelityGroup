@@ -114,6 +114,29 @@ if generate:
                     st.sidebar.error(f"PDF parse error: {e}")
                     st.stop()
 
+        # Truncate to fit under token-per-minute limits
+        encoder = tiktoken.encoding_for_model("gpt-4o")
+        sys_tokens = len(encoder.encode(DESCRIPTIONS[persona]))
+        preamble = "Document content:\n\n"
+        postamble = f"\n\nPlease provide a detailed summary for a {persona}, using up to {max_toks} tokens."
+        overhead_tokens = (
+            sys_tokens
+            + len(encoder.encode(preamble))
+            + len(encoder.encode(postamble))
+            + max_toks
+            + 50
+        )
+        tpm_limit = 30000
+        allowed_doc_tokens = max(0, tpm_limit - overhead_tokens)
+
+        doc_tokens = encoder.encode(document_text)
+        if len(doc_tokens) > allowed_doc_tokens:
+            doc_tokens = doc_tokens[:allowed_doc_tokens]
+            document_text = encoder.decode(doc_tokens)
+            st.warning(
+                f"⚠️ Input was too long and has been truncated to ~{allowed_doc_tokens} tokens."
+            )
+
         system_msg = {"role": "system", "content": DESCRIPTIONS[persona]}
         user_msg = {
             "role": "user",
