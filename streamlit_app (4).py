@@ -109,7 +109,8 @@ if generate:
                 "role": "user",
                 "content": (
                     f"Document content:\n\n{text}\n\n"
-                    f"Please summarize this for a {persona} in no more than {max_toks} tokens."
+                    f"Please provide a **detailed** summary for a {persona}, "
+                    f"using as close to {max_toks} tokens as possible (but no more)."
                 ),
             }
             with st.spinner(f"Summarizing {title}..."):
