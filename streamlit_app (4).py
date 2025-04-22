@@ -4,6 +4,7 @@ from PyPDF2 import PdfReader
 from PyPDF2.errors import PdfReadError
 import streamlit as st
 from openai import OpenAI
+import tiktoken 
 
 # --------------------
 # Configuration & Secrets
