@@ -1,13 +1,13 @@
-import io
-import zipfile
 import streamlit as st
 from openai import OpenAI
 from PyPDF2 import PdfReader
+import zipfile
+import io
 
 # --------------------
 # Configuration & Secrets
 # --------------------
-# In Streamlit Secrets panel:
+# In your Streamlit Secrets panel:
 # [openai]
 # api_key = "<YOUR-SK-KEY>"
 
@@ -27,7 +27,7 @@ DESCRIPTIONS = {
     ),
     "Cyber Risk Analyst / CISO / ISO": (
         "Cyber Risk Analysts identify and prioritize risks to the organization’s IT environment. CISOs and ISOs oversee "
-        "strategic direction of cybersecurity policies, ensure regulatory compliance (e.g. GDPR), lead incident response, "
+        "strategic direction of cybersecurity policies, ensure regulatory compliance (e.g., GDPR), lead incident response, "
         "crisis management, and align security practices with business objectives."
     ),
     "Application Security Analyst": (
@@ -50,16 +50,13 @@ DESCRIPTIONS = {
 }
 
 def extract_text_from_pdf(file) -> str:
-    """
-    Extracts and concatenates text from all pages of a PDF file-like object.
-    """
     reader = PdfReader(file)
-    chunks = []
+    texts = []
     for page in reader.pages:
-        text = page.extract_text()
-        if text:
-            chunks.append(text)
-    return "\n\n".join(chunks)
+        t = page.extract_text()
+        if t:
+            texts.append(t)
+    return "\n\n".join(texts)
 
 # --------------------
 # Streamlit UI
@@ -70,11 +67,13 @@ st.title("Cybersecurity Persona–Based Summarizer")
 # Sidebar controls
 st.sidebar.header("Controls")
 persona = st.sidebar.selectbox("Select Persona", list(DESCRIPTIONS.keys()))
-uploaded_file = st.sidebar.file_uploader(
+
+uploaded = st.sidebar.file_uploader(
     "Upload a PDF or ZIP of PDFs",
     type=["pdf", "zip"],
-    help="Max size per PDF: ~200 MB",
+    help="Max size per file: ~200 MB"
 )
+
 max_toks = st.sidebar.slider(
     "Max summary length (tokens)",
     min_value=100,
@@ -82,76 +81,56 @@ max_toks = st.sidebar.slider(
     value=500,
     step=100,
 )
+
 generate = st.sidebar.button("Generate Summary")
 
-# Generate summaries
 if generate:
-    if not uploaded_file:
-        st.sidebar.warning("Please upload a file first.")
+    if not uploaded:
+        st.sidebar.warning("Please upload a PDF or ZIP first.")
     else:
-        system_msg = {"role": "system", "content": DESCRIPTIONS[persona]}
-
+        docs = []
         # Handle ZIP of PDFs
-        if uploaded_file.name.lower().endswith(".zip") or uploaded_file.type == "application/zip":
-            data = uploaded_file.read()
-            z = zipfile.ZipFile(io.BytesIO(data))
-            pdf_files = [f for f in z.namelist() if f.lower().endswith(".pdf")]
-            if not pdf_files:
-                st.error("No PDFs found in the ZIP.")
-            else:
-                for pdf_name in pdf_files:
-                    with st.spinner(f"Processing {pdf_name}..."):
-                        pdf_bytes = z.read(pdf_name)
-                        document_text = extract_text_from_pdf(io.BytesIO(pdf_bytes))
-                    user_msg = {
-                        "role": "user",
-                        "content": (
-                            f"Document content from {pdf_name}:\n\n{document_text}\n\n"
-                            f"Please summarize this for a {persona}."
-                        ),
-                    }
-                    try:
-                        resp = openai_client.chat.completions.create(
-                            model="gpt-4o",
-                            messages=[system_msg, user_msg],
-                            max_tokens=max_toks,
-                        )
-                        summary = resp.choices[0].message.content
-                        st.subheader(f"Summary for {pdf_name}")
-                        st.write(summary)
-                    except Exception as e:
-                        st.error(f"OpenAI error for {pdf_name}: {e}")
-
-        # Handle single PDF
+        if uploaded.type == "application/zip":
+            with zipfile.ZipFile(uploaded) as z:
+                for fname in z.namelist():
+                    if fname.lower().endswith(".pdf"):
+                        with z.open(fname) as f:
+                            text = extract_text_from_pdf(f)
+                            docs.append((fname, text))
         else:
-            with st.spinner("Extracting text..."):
-                pdf_bytes = uploaded_file.read()
-                document_text = extract_text_from_pdf(io.BytesIO(pdf_bytes))
+            # Single PDF
+            text = extract_text_from_pdf(uploaded)
+            docs.append((uploaded.name or "Document", text))
+
+        # Summarize each document
+        for title, text in docs:
+            system_msg = {"role": "system", "content": DESCRIPTIONS[persona]}
             user_msg = {
                 "role": "user",
                 "content": (
-                    f"Document content:\n\n{document_text}\n\n"
-                    f"Please summarize this for a {persona}."
+                    f"Document content:\n\n{text}\n\n"
+                    f"Please summarize this for a {persona} in no more than {max_toks} tokens."
                 ),
             }
-            try:
-                resp = openai_client.chat.completions.create(
-                    model="gpt-4o",
-                    messages=[system_msg, user_msg],
-                    max_tokens=max_toks,
-                )
-                summary = resp.choices[0].message.content
-                st.subheader("Summary Output")
-                st.write(summary)
-            except Exception as e:
-                st.error(f"OpenAI error: {e}")
+            with st.spinner(f"Summarizing {title}..."):
+                try:
+                    resp = openai_client.chat.completions.create(
+                        model="gpt-4o",
+                        messages=[system_msg, user_msg],
+                        max_tokens=max_toks,
+                    )
+                    summary = resp.choices[0].message.content
+                    st.subheader(f"Summary: {title}")
+                    st.write(summary)
+                except Exception as e:
+                    st.error(f"OpenAI error: {e}")
 
-# Feedback section
-st.sidebar.markdown("---")
-st.sidebar.subheader("Rate this summary")
-rating = st.sidebar.radio("Stars", [1, 2, 3, 4, 5], index=4)
-comment = st.sidebar.text_area("Additional comments")
-if st.sidebar.button("Submit Feedback"):
-    st.success(f"Thanks! You rated this {rating} star(s).")
-    if comment:
-        st.info(f"Your comment: “{comment}”")
+        # Feedback section
+        st.sidebar.markdown("---")
+        st.sidebar.subheader("Rate this summary")
+        rating = st.sidebar.radio("Stars", [1, 2, 3, 4, 5], index=4)
+        comment = st.sidebar.text_area("Additional comments")
+        if st.sidebar.button("Submit Feedback"):
+            st.success(f"Thanks! You rated this {rating} star(s).")
+            if comment:
+                st.info(f"Your comment: “{comment}”")
