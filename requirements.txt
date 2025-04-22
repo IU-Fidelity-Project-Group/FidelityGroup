@@ -1,3 +1,4 @@
 streamlit>=1.4.0
 openai>=1.0.0
 PyPDF2
+tiktoken
