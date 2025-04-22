@@ -2,3 +2,4 @@ streamlit
 openai
 unstructured
 pdfminer.six
+pi-heif
