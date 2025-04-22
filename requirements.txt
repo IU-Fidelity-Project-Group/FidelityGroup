@@ -3,3 +3,4 @@ openai
 unstructured
 pdfminer.six
 pi-heif
+unstructured-inference
