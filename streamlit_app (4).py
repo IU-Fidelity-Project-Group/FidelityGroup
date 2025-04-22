@@ -108,29 +108,7 @@ if generate:
     name = uploaded_file.name.lower()
     encoder = tiktoken.encoding_for_model("gpt-4o")
 
-    # Helper to truncate text to fit under our token‑per‑minute budget
-    def truncate_text(text: str, persona_desc: str, max_toks: int) -> str:
-        sys_tokens = len(encoder.encode(persona_desc))
-        preamble   = "Document content:\n\n"
-        postamble  = f"\n\nPlease summarize for a {persona}, using up to {max_toks} tokens."
-        overhead   = (
-            sys_tokens
-            + len(encoder.encode(preamble))
-            + len(encoder.encode(postamble))
-            + max_toks
-            + 50
-        )
-        tpm_limit        = 30_000
-        allowed_doc_tok  = max(0, tpm_limit - overhead)
-
-        doc_tokens = encoder.encode(text)
-        if len(doc_tokens) > allowed_doc_tok:
-            st.warning(f"⚠️ Input was too long and has been truncated to ~{allowed_doc_tok} tokens.")
-            doc_tokens = doc_tokens[:allowed_doc_tok]
-            return encoder.decode(doc_tokens)
-        return text
-
-# ZIP branch
+    # ZIP branch
     if name.endswith(".zip"):
         # extract
         extracted_docs = {}
@@ -141,7 +119,7 @@ if generate:
                         raw = extract_text_from_pdf(f)
                         extracted_docs[pdf_name] = truncate_text(raw, DESCRIPTIONS[persona], max_toks)
 
-        # summarize + score
+        # summarize + compatibility scoring
         summary_by_pdf = {}
         score_by_pdf   = {}
         for pdf_name, pdf_text in extracted_docs.items():
@@ -156,29 +134,29 @@ if generate:
             )
             summary = summ_resp.choices[0].message.content
 
-        # 2) compatibility score
-        score_resp = openai_client.chat.completions.create(
-            model="gpt-4o",
-            messages=[
-                {"role": "system", "content": DESCRIPTIONS[persona]},
-                {"role": "user",   "content": (
-                    f"Document content:\n\n{pdf_text}\n\n"
-                    f"On a scale from 1 (poor) to 5 (excellent), how well does this document match the persona “{persona}”? "
-                    "Please reply with just the number."
-                )},
-            ],
-            max_tokens=4,
-        )
-        score = score_resp.choices[0].message.content.strip()
+            # 2) compatibility score
+            score_resp = openai_client.chat.completions.create(
+                model="gpt-4o",
+                messages=[
+                    {"role": "system", "content": DESCRIPTIONS[persona]},
+                    {"role": "user",   "content": (
+                        f"Document content:\n\n{pdf_text}\n\n"
+                        f"On a scale from 1 (poor) to 5 (excellent), how well does this document match the persona “{persona}”? "
+                        "Please reply with just the number."
+                    )},
+                ],
+                max_tokens=4,
+            )
+            score = score_resp.choices[0].message.content.strip()
 
-        summary_by_pdf[pdf_name] = summary
-        score_by_pdf[pdf_name]   = score
+            summary_by_pdf[pdf_name] = summary
+            score_by_pdf[pdf_name]   = score
 
-    # display
-    for pdf_name in summary_by_pdf:
-        st.subheader(pdf_name)
-        st.write(summary_by_pdf[pdf_name])
-        st.markdown(f"**Compatibility score for {persona}:** {score_by_pdf[pdf_name]}/5")
+        # display
+        for pdf_name in summary_by_pdf:
+            st.subheader(pdf_name)
+            st.write(summary_by_pdf[pdf_name])
+            st.markdown(f"**Compatibility score for {persona}:** {score_by_pdf[pdf_name]}/5")
 
     # Single‑PDF branch
     else:
@@ -201,25 +179,24 @@ if generate:
             st.subheader(uploaded_file.name)
             st.write(summary)
 
-        # 2) compatibility score
-        score_resp = openai_client.chat.completions.create(
-            model="gpt-4o",
-            messages=[
-                {"role": "system", "content": DESCRIPTIONS[persona]},
-                {"role": "user",   "content": (
-                    f"Document content:\n\n{document_text}\n\n"
-                    f"On a scale from 1 (poor) to 5 (excellent), how well does this document match the persona “{persona}”? "
-                    "Please reply with just the number."
-                )},
-            ],
-            max_tokens=4,
-        )
-        compat_score = score_resp.choices[0].message.content.strip()
-        st.markdown(f"**Compatibility score for {persona}:** {compat_score}/5")
+            # 2) compatibility score
+            score_resp = openai_client.chat.completions.create(
+                model="gpt-4o",
+                messages=[
+                    {"role": "system", "content": DESCRIPTIONS[persona]},
+                    {"role": "user",   "content": (
+                        f"Document content:\n\n{document_text}\n\n"
+                        f"On a scale from 1 (poor) to 5 (excellent), how well does this document match the persona “{persona}”? "
+                        "Please reply with just the number."
+                    )},
+                ],
+                max_tokens=4,
+            )
+            compat_score = score_resp.choices[0].message.content.strip()
+            st.markdown(f"**Compatibility score for {persona}:** {compat_score}/5")
 
-    except Exception as e:
-        st.error(f"OpenAI error: {e}")
-
+        except Exception as e:
+            st.error(f"OpenAI error: {e}")
 
 
 # --------------------
