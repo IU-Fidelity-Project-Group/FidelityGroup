@@ -130,58 +130,96 @@ if generate:
             return encoder.decode(doc_tokens)
         return text
 
-    # ZIP branch
-    if name.endswith(".zip"):
-        # extract
-        extracted_docs = {}
-        with zipfile.ZipFile(uploaded_file) as z:
-            for pdf_name in z.namelist():
-                if pdf_name.lower().endswith(".pdf"):
-                    with z.open(pdf_name) as f:
-                        raw = extract_text_from_pdf(f)
-                        extracted_docs[pdf_name] = truncate_text(raw, DESCRIPTIONS[persona], max_toks)
+# ZIP branch
+if name.endswith(".zip"):
+    # extract
+    extracted_docs = {}
+    with zipfile.ZipFile(uploaded_file) as z:
+        for pdf_name in z.namelist():
+            if pdf_name.lower().endswith(".pdf"):
+                with z.open(pdf_name) as f:
+                    raw = extract_text_from_pdf(f)
+                    extracted_docs[pdf_name] = truncate_text(raw, DESCRIPTIONS[persona], max_toks)
 
-        # summarize
-        summary_by_pdf = {}
-        for pdf_name, pdf_text in extracted_docs.items():
-            resp = openai_client.chat.completions.create(
-                model="gpt-4o",
-                messages=[
-                    {"role": "system", "content": DESCRIPTIONS[persona]},
-                    {"role": "user",   "content": f"Document content:\n\n{pdf_text}\n\nPlease summarize for a {persona}."},
-                ],
-                max_tokens=max_toks,
-            )
-            summary_by_pdf[pdf_name] = resp.choices[0].message.content
+    # summarize + score
+    summary_by_pdf = {}
+    score_by_pdf   = {}
+    for pdf_name, pdf_text in extracted_docs.items():
+        # 1) summary
+        summ_resp = openai_client.chat.completions.create(
+            model="gpt-4o",
+            messages=[
+                {"role": "system", "content": DESCRIPTIONS[persona]},
+                {"role": "user",   "content": f"Document content:\n\n{pdf_text}\n\nPlease summarize for a {persona}."},
+            ],
+            max_tokens=max_toks,
+        )
+        summary = summ_resp.choices[0].message.content
 
-        # display
-        for pdf_name, summ in summary_by_pdf.items():
-            st.subheader(pdf_name)
-            st.write(summ)
+        # 2) compatibility score
+        score_resp = openai_client.chat.completions.create(
+            model="gpt-4o",
+            messages=[
+                {"role": "system", "content": DESCRIPTIONS[persona]},
+                {"role": "user",   "content": (
+                    f"Document content:\n\n{pdf_text}\n\n"
+                    f"On a scale from 1 (poor) to 5 (excellent), how well does this document match the persona “{persona}”? "
+                    "Please reply with just the number."
+                )},
+            ],
+            max_tokens=4,
+        )
+        score = score_resp.choices[0].message.content.strip()
 
+        summary_by_pdf[pdf_name] = summary
+        score_by_pdf[pdf_name]   = score
 
-    # Single‑PDF branch
-    else:
-        with st.spinner("Extracting text…"):
-            raw = extract_text_from_pdf(uploaded_file)
-            document_text = truncate_text(raw, DESCRIPTIONS[persona], max_toks)
+    # display
+    for pdf_name in summary_by_pdf:
+        st.subheader(pdf_name)
+        st.write(summary_by_pdf[pdf_name])
+        st.markdown(f"**Compatibility score for {persona}:** {score_by_pdf[pdf_name]}/5")
 
-        system_msg = {"role": "system", "content": DESCRIPTIONS[persona]}
-        user_msg   = {"role": "user",   "content": f"Document content:\n\n{document_text}\n\nPlease summarize for a {persona}."}
+# Single‑PDF branch
+else:
+    with st.spinner("Extracting text…"):
+        raw = extract_text_from_pdf(uploaded_file)
+        document_text = truncate_text(raw, DESCRIPTIONS[persona], max_toks)
 
-        try:
-            resp    = openai_client.chat.completions.create(
-                         model="gpt-4o",
-                         messages=[system_msg, user_msg],
-                         max_tokens=max_toks,
-                     )
-            summary = resp.choices[0].message.content
+    try:
+        # 1) summary
+        resp = openai_client.chat.completions.create(
+            model="gpt-4o",
+            messages=[
+                {"role": "system", "content": DESCRIPTIONS[persona]},
+                {"role": "user",   "content": f"Document content:\n\n{document_text}\n\nPlease summarize for a {persona}."},
+            ],
+            max_tokens=max_toks,
+        )
+        summary = resp.choices[0].message.content
 
-            st.subheader(uploaded_file.name)
-            st.write(summary)
+        st.subheader(uploaded_file.name)
+        st.write(summary)
 
-        except Exception as e:
-            st.error(f"OpenAI error: {e}")
+        # 2) compatibility score
+        score_resp = openai_client.chat.completions.create(
+            model="gpt-4o",
+            messages=[
+                {"role": "system", "content": DESCRIPTIONS[persona]},
+                {"role": "user",   "content": (
+                    f"Document content:\n\n{document_text}\n\n"
+                    f"On a scale from 1 (poor) to 5 (excellent), how well does this document match the persona “{persona}”? "
+                    "Please reply with just the number."
+                )},
+            ],
+            max_tokens=4,
+        )
+        compat_score = score_resp.choices[0].message.content.strip()
+        st.markdown(f"**Compatibility score for {persona}:** {compat_score}/5")
+
+    except Exception as e:
+        st.error(f"OpenAI error: {e}")
+
 
 
 # --------------------
