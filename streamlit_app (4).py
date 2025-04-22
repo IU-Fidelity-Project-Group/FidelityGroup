@@ -158,6 +158,27 @@ if generate:
         for pdf_name, summ in summary_by_pdf.items():
             st.subheader(pdf_name)
             st.write(summ)
+    rating_resp = openai_client.chat.completions.create(
+    model="gpt-4o",
+    messages=[
+        {
+            "role": "system",
+            "content": "You are a helpful assistant that rates how well a document aligns with a given cybersecurity persona on a scale from 1 (not at all) to 5 (perfectly)."
+        },
+        {
+            "role": "user",
+            "content": (
+                f"Persona: {persona}\n\n"
+                f"Summary: {summary}\n\n"
+                "Please give a single numeric rating from 1–5 and a one‑sentence justification."
+            )
+        },
+    ],
+    max_tokens=30,
+)
+rating = rating_resp.choices[0].message.content.strip()
+st.subheader("Suitability Rating")
+st.write(rating)
 
     # Single‑PDF branch
     else:
