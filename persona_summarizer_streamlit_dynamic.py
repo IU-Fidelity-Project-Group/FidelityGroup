@@ -52,7 +52,7 @@ def match_persona(doc_text, persona_names, persona_texts):
 # --------------------
 # Astra Vector Search
 # --------------------
-def query_astra_vectors(collection, embedding, top_k=3):
+def query_astra_vectors(collection, embedding, top_k):
     result = collection.vector_find(vector=embedding, limit=top_k)
     return result["data"]["documents"]
 
@@ -107,10 +107,10 @@ if generate:
     doc_embedding = get_embedding(doc_text)
 
     # Vector match glossary & persona content
-    glossary_hits = query_astra_vectors(glossary_collection, doc_embedding)
+    glossary_hits = query_astra_vectors(glossary_collection, doc_embedding, top_k=5)
     glossary_context = "\n\n".join([d.get("text", "") for d in glossary_hits])
 
-    persona_hits = query_astra_vectors(persona_collection, doc_embedding)
+    persona_hits = query_astra_vectors(persona_collection, doc_embedding, top_k=1)
     persona_context = "\n\n".join([d.get("text", "") for d in persona_hits])
 
     # Prompt
