@@ -3,7 +3,6 @@ import os
 import zipfile
 import streamlit as st
 import numpy as np
-import faiss
 import tiktoken
 from PyPDF2 import PdfReader
 from openai import OpenAI
@@ -34,22 +33,6 @@ def get_embedding(text):
     return np.array(response.data[0].embedding, dtype=np.float32)
 
 # --------------------
-# FAISS Similarity
-# --------------------
-def build_faiss_index(texts):
-    dim = len(get_embedding("sample"))
-    index = faiss.IndexFlatL2(dim)
-    vectors = [get_embedding(t) for t in texts]
-    index.add(np.array(vectors))
-    return index, vectors
-
-def match_persona(doc_text, persona_names, persona_texts):
-    index, _ = build_faiss_index(persona_texts)
-    doc_vec = get_embedding(doc_text)
-    scores, idxs = index.search(np.array([doc_vec]), k=1)
-    return persona_names[idxs[0][0]]
-
-# --------------------
 # Astra Vector Search
 # --------------------
 def query_astra_vectors(collection, embedding, top_k):
@@ -75,14 +58,15 @@ def extract_text_from_zip(file):
 st.set_page_config(page_title="Persona Summarizer", layout="wide")
 st.title("Cybersecurity Persona-Based Summarizer")
 
-# Fetch available personas from AstraDB (profile DB)
+# Load personas from DB
 persona_docs = persona_collection.find()
 persona_list = [doc["name"] for doc in persona_docs["data"]["documents"]]
 persona = st.sidebar.selectbox("Select Persona", persona_list)
 
-# Fetch full description for selected persona
+# Fetch full persona description
 persona_doc = persona_collection.find_one({"name": {"$eq": persona}})
 persona_description = persona_doc["data"]["document"]["text"] if persona_doc["status"]["code"] == 200 else ""
+
 uploaded_file = st.sidebar.file_uploader("Upload PDF or ZIP", type=["pdf", "zip"])
 max_toks = st.sidebar.slider("Max tokens", 100, 2000, 500, 100)
 generate = st.sidebar.button("Generate Summary")
@@ -92,10 +76,8 @@ if generate:
         st.warning("Please upload a file.")
         st.stop()
 
-    # Extract text
     raw_text = extract_text_from_zip(uploaded_file) if uploaded_file.name.endswith(".zip") else extract_text_from_pdf(uploaded_file)
 
-    # Truncate for token safety
     def truncate(text, persona_text, max_toks):
         pre = "Document content:\n\n"
         post = f"\n\nPlease summarize for a {persona}."
@@ -106,14 +88,12 @@ if generate:
     doc_text = truncate(raw_text, persona_description, max_toks)
     doc_embedding = get_embedding(doc_text)
 
-    # Vector match glossary & persona content
-    glossary_hits = query_astra_vectors(glossary_collection, doc_embedding, top_k=20)
+    glossary_hits = query_astra_vectors(glossary_collection, doc_embedding, top_k=5)
     glossary_context = "\n\n".join([d.get("text", "") for d in glossary_hits])
 
     persona_hits = query_astra_vectors(persona_collection, doc_embedding, top_k=1)
     persona_context = "\n\n".join([d.get("text", "") for d in persona_hits])
 
-    # Prompt
     system_msg = {"role": "system", "content": persona_description}
     user_msg = {"role": "user", "content": f"{persona_context}\n\n{glossary_context}\n\n{doc_text}\n\nPlease summarize for a {persona}."}
 
