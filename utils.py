@@ -66,3 +66,25 @@ def extract_text_from_zip(file):
         return "\n\n".join([
             extract_text(BytesIO(z.read(n))) for n in z.namelist() if n.lower().endswith(".pdf")
         ])
+
+def fetch_persona_names(endpoint_url, token, collection_name="profile_collection", top_k=50):
+    dummy_vector = [0.0] * 1536
+    url = f"{endpoint_url}/api/json/v1/{collection_name}/vector-search"
+    headers = {
+        "x-cassandra-token": token,
+        "Content-Type": "application/json"
+    }
+    payload = {
+        "vector": dummy_vector,
+        "limit": top_k,
+        "filter": {
+            "metadata.persona": { "$exists": True }
+        }
+    }
+    response = requests.post(url, headers=headers, json=payload)
+    docs = response.json().get("data", {}).get("documents", [])
+    return sorted({
+        doc.get("metadata", {}).get("persona")
+        for doc in docs
+        if doc.get("metadata", {}).get("persona")
+    })
