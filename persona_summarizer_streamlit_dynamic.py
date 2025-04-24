@@ -136,6 +136,21 @@ if generate:
                 chunk_summaries.append(f"[Error summarizing chunk {i+1}: {e}]")
 
     st.subheader("Combined Summary")
-    for i, summary in enumerate(chunk_summaries, 1):
-        st.markdown(f"### Chunk {i}")
-        st.write(summary)
+    
+    # Generate a single summary of all chunk summaries
+    with st.spinner("Generating final executive summary..."):
+        final_msg = {
+            "role": "user",
+            "content": f"""You are summarizing a technical cybersecurity document for a {persona}.\n\nYour goal is to extract and synthesize only the most relevant, actionable, and persona-specific insights from the chunk summaries provided below.\n\nExclude generalities and prioritize insights, findings, issues, or context that align with the responsibilities and focus areas of a {persona}.\n\nChunk Summaries:\n\n{"\n\n".join(chunk_summaries)}\n\nWrite a final executive summary that would be directly useful to a {persona}."""
+        }
+        try:
+            final_summary = openai_client.chat.completions.create(
+                model="gpt-4o",
+                messages=[system_msg, final_msg],
+                max_tokens=600
+            )
+            st.subheader("Final Executive Summary")
+            st.write(final_summary.choices[0].message.content)
+        except Exception as e:
+            st.error(f"[Error generating final summary: {e}]")
+    
