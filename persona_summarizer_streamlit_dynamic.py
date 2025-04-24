@@ -83,7 +83,7 @@ if generate:
         chunks = chunk_text_by_tokens(raw_text)
         chunk_summaries = []
         for i, chunk in enumerate(chunks):
-            with st.spinner(f"Summarizing chunk {{i+1}}/{{len(chunks)}}..."):
+            with st.spinner(f"Summarizing chunk {i+1}/{len(chunks)}..."):
                 persona_context = ""  # Could also pull from description if needed
                 user_msg = {"role": "user", "content": f"{chunk}\n\nSummarize this chunk for a {persona}."}
                 try:
