@@ -1,3 +1,5 @@
+# utils.py
+
 import openai
 import numpy as np
 import pandas as pd
@@ -7,11 +9,13 @@ from io import BytesIO
 from pdfminer.high_level import extract_text
 import zipfile
 
-# Initialize tokenizer for token-aware operations
+# Set up token encoder for managing OpenAI token limits
 encoder = tiktoken.encoding_for_model("gpt-4o")
 
-
-# Embeds a given text using OpenAI's embedding model, truncated to max context length
+# ------------------------------------------------------
+# Embeds text using the OpenAI embedding model.
+# Truncates to fit token and character limits if needed.
+# ------------------------------------------------------
 def get_embedding(text, openai_client, max_tokens=8192, max_chars=16000):
     tokens = encoder.encode(text)
     if len(tokens) > max_tokens:
@@ -22,13 +26,17 @@ def get_embedding(text, openai_client, max_tokens=8192, max_chars=16000):
     response = openai_client.embeddings.create(input=text, model="text-embedding-3-small")
     return np.array(response.data[0].embedding, dtype=np.float32)
 
-
-# Calculates cosine similarity between two embedding vectors
+# ------------------------------------------------------
+# Computes cosine similarity between two vectors.
+# Returns a float representing similarity.
+# ------------------------------------------------------
 def cosine_similarity(a, b):
     return float(np.dot(a, b) / (np.linalg.norm(a) * np.linalg.norm(b)))
 
-
-# Splits text into chunks based on token count with optional overlap
+# ------------------------------------------------------
+# Splits text into chunks of tokens with optional overlap.
+# Useful for breaking up large documents.
+# ------------------------------------------------------
 def chunk_text_by_tokens(text, chunk_size=3072, overlap=256):
     tokens = encoder.encode(text)
     chunks = []
@@ -40,8 +48,10 @@ def chunk_text_by_tokens(text, chunk_size=3072, overlap=256):
         start += chunk_size - overlap
     return chunks
 
-
-# Queries Astra DB vector search endpoint using a given vector and retrieves documents
+# ------------------------------------------------------
+# Queries an Astra vector collection using a REST API call.
+# Returns a list of documents sorted by similarity.
+# ------------------------------------------------------
 def query_astra_vectors_rest(collection_name, endpoint_url, token, embedding, top_k=5):
     url = f"{endpoint_url}/api/json/v1/{collection_name}/vector-search"
     headers = {
@@ -58,8 +68,10 @@ def query_astra_vectors_rest(collection_name, endpoint_url, token, embedding, to
     else:
         return []
 
-
-# Logs document summaries that were skipped based on low suitability scores
+# ------------------------------------------------------
+# Appends a skipped summary to a CSV log file.
+# Used to track low-relevance documents.
+# ------------------------------------------------------
 def log_skipped_summary(log_entry):
     log_file = "skipped_summaries.csv"
     try:
@@ -69,21 +81,25 @@ def log_skipped_summary(log_entry):
     updated = pd.concat([existing, pd.DataFrame([log_entry])], ignore_index=True)
     updated.to_csv(log_file, index=False)
 
-
-# Extracts text content from a PDF file
+# ------------------------------------------------------
+# Extracts text from a PDF file.
+# ------------------------------------------------------
 def extract_text_from_pdf(file):
     return extract_text(BytesIO(file.read()))
 
-
-# Extracts and concatenates text from all PDF files within a ZIP archive
+# ------------------------------------------------------
+# Extracts text from all PDFs inside a ZIP file.
+# ------------------------------------------------------
 def extract_text_from_zip(file):
     with zipfile.ZipFile(file) as z:
         return "\n\n".join([
             extract_text(BytesIO(z.read(n))) for n in z.namelist() if n.lower().endswith(".pdf")
         ])
 
-
-# Fetches available persona names from the profile collection
+# ------------------------------------------------------
+# Fetches the list of persona names from the profile collection.
+# This powers the dropdown in the Streamlit sidebar.
+# ------------------------------------------------------
 def fetch_persona_names(endpoint_url, token, collection_name="profile_collection", top_k=50):
     url = f"{endpoint_url}/api/json/v1/{collection_name}/find"
     headers = {
@@ -101,8 +117,10 @@ def fetch_persona_names(endpoint_url, token, collection_name="profile_collection
         if doc.get("metadata", {}).get("persona")
     })
 
-
-# Retrieves the vector associated with a persona document using $vector
+# ------------------------------------------------------
+# Retrieves the vector for a given persona by name.
+# Assumes the vector is already embedded and stored under "$vector".
+# ------------------------------------------------------
 def fetch_persona_vector(persona_name, endpoint_url, token, collection_name="profile_collection"):
     url = f"{endpoint_url}/api/json/v1/{collection_name}/find"
     headers = {
@@ -118,16 +136,15 @@ def fetch_persona_vector(persona_name, endpoint_url, token, collection_name="pro
         }
     }
     response = requests.post(url, headers=headers, json=payload)
-    try:
-        docs = response.json().get("data", {}).get("documents", [])
-        if docs and "$vector" in docs[0]:
-            return np.array(docs[0]["$vector"], dtype=np.float32)
-    except Exception as e:
-        print(f"Error parsing persona vector response: {e}")
+    doc = response.json().get("data", {}).get("documents", [{}])[0]
+    if "$vector" in doc:
+        return np.array(doc["$vector"], dtype=np.float32)
     return np.zeros(1536, dtype=np.float32)
 
-
-# Uses OpenAI to extract top 10 keywords from a document text
+# ------------------------------------------------------
+# Uses an LLM to extract top 10 cybersecurity keywords from text.
+# Used to create a compact, focused vector representation.
+# ------------------------------------------------------
 def extract_keywords_from_text(text, openai_client):
     system_prompt = "Extract the top 10 technical cybersecurity keywords, concepts, or entities from this document. Return them as a single comma-separated string."
     messages = [
@@ -141,5 +158,5 @@ def extract_keywords_from_text(text, openai_client):
             max_tokens=150
         )
         return response.choices[0].message.content.strip()
-    except Exception as e:
+    except Exception:
         return ""
