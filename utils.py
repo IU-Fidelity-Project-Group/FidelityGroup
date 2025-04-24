@@ -2,18 +2,31 @@ import numpy as np
 import pandas as pd
 import requests
 import tiktoken
+import time
 
 encoder = tiktoken.encoding_for_model("gpt-4o")
 
-def get_embedding(text, openai_client, max_tokens=8192, max_chars=16000):
+def get_embedding(text, openai_client, max_tokens=8192, max_chars=16000, retries=3):
+    if not text or not isinstance(text, str):
+        raise ValueError("Input to get_embedding must be a non-empty string.")
+
     tokens = encoder.encode(text)
     if len(tokens) > max_tokens:
-        tokens = tokens[:max_tokens]
-    text = encoder.decode(tokens)
+        text = encoder.decode(tokens[:max_tokens])
     if len(text) > max_chars:
         text = text[:max_chars]
-    response = openai_client.embeddings.create(input=text, model="text-embedding-3-small")
-    return np.array(response.data[0].embedding, dtype=np.float32)
+
+    for attempt in range(retries):
+        try:
+            response = openai_client.embeddings.create(input=text, model="text-embedding-3-small")
+            return np.array(response.data[0].embedding, dtype=np.float32)
+        except openai.RateLimitError:
+            wait_time = (2 ** attempt) * 2
+            time.sleep(wait_time)
+        except Exception as e:
+            raise RuntimeError(f"OpenAI embedding failed: {str(e)}")
+
+    raise RuntimeError("OpenAI embedding failed after multiple retries due to rate limits.")
 
 def cosine_similarity(a, b):
     return float(np.dot(a, b) / (np.linalg.norm(a) * np.linalg.norm(b)))
