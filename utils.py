@@ -112,42 +112,23 @@ def fetch_persona_description(persona_name, endpoint_url, token, collection_name
     return ""
 
 def fetch_persona_vector(persona_name, endpoint_url, token, collection_name="profile_collection"):
-    import streamlit as st
-
-    # Construct correct Document API URL
-    url = f"{endpoint_url}/api/json/v1/{collection_name}/find"
-    headers = {
-        "x-cassandra-token": token,
-        "Content-Type": "application/json"
-    }
-
-    payload = {
-        "filter": {
-            "metadata.persona": { "$eq": persona_name }
-        },
-        "options": {
-            "limit": 1,
-            "includeFields": ["$vector"]
-        }
-    }
-
-    st.write("🧭 Fetching persona vector from:", url)
-    st.json(payload)
+    client = DataAPIClient(token)
+    db = client.get_database_by_api_endpoint(endpoint_url)
+    collection = db.get_collection(collection_name)
 
     try:
-        response = requests.post(url, headers=headers, json=payload)
-        data = response.json()
-        st.write("📦 Raw persona vector response:", data)
-
-        docs = data.get("data", {}).get("documents", [])
-        if docs and "$vector" in docs[0]:
-            return np.array(docs[0]["$vector"], dtype=np.float32)
-
-        st.warning("No $vector found in document.")
+        result = collection.find_one(
+            {"metadata.persona": persona_name},
+            projection={"$vector": True}
+        )
+        if result and "$vector" in result:
+            return np.array(result["$vector"], dtype=np.float32)
+        else:
+            print("⚠️ No $vector field found in the document.")
+            return np.zeros(1536, dtype=np.float32)
     except Exception as e:
-        st.error(f"Error fetching persona vector: {e}")
-
-    return np.zeros(1536, dtype=np.float32)
+        print(f"⚠️ Error fetching persona vector: {e}")
+        return np.zeros(1536, dtype=np.float32)
 
 def extract_keywords_from_text(text, openai_client):
     system_prompt = "Extract the top 10 technical cybersecurity keywords, concepts, or entities from this document. Return them as a single comma-separated string."
