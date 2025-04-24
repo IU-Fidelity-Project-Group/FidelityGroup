@@ -28,7 +28,7 @@ profile_collection = "profile_collection"
 glossary_collection = "glossarycollection"
 
 # PDF text functions moved to utils.py
-    return extract_text(BytesIO(file.read()))
+return extract_text(BytesIO(file.read()))
 
 def extract_text_from_zip(file):
     with zipfile.ZipFile(file) as z:
