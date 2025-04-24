@@ -59,7 +59,7 @@ st.set_page_config(page_title="Persona Summarizer", layout="wide")
 st.title("Cybersecurity Persona-Based Summarizer")
 
 # Load personas from DB
-persona_cursor = profile_collection.find()
+persona_cursor = persona_collection.find()
 persona_list = [
     doc["document"]["metadata"]["persona"]
     for doc in persona_cursor
