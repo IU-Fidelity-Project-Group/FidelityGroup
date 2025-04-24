@@ -1,0 +1,59 @@
+{
+  "text": "Threat Intelligence Analysts monitor external threat landscapes, track APT groups, and deliver actionable insights to internal stakeholders. Their goals include detecting emerging threats early, mapping TTPs using MITRE ATT&CK, and enabling proactive defense. They use tools like MISP, ThreatConnect, and Recorded Future. They work with SOC, IR, cloud security, and compliance teams. They prefer concise reports, dashboards, and executive briefings with priority tags. Communication is analytical and urgency-aware.",
+  "metadata": {
+    "persona": "Threat Intelligence Analyst",
+    "description": "Tracks threat actors, analyzes TTPs, and provides strategic and tactical intelligence to SOC and leadership teams. Specializes in understanding adversary behavior and mapping threats to risk.",
+    "tone": "analytical and urgent",
+    "communication_style": "succinct and risk-prioritized",
+    "content_format": "intel brief or dashboard",
+    "security_domain": "Threat Intelligence",
+    "role_tags": [
+      "APT tracking",
+      "threat intelligence",
+      "cybercrime"
+    ],
+    "goals": [
+      "Stay ahead of threat actors",
+      "Translate intel into action",
+      "Support threat modeling"
+    ],
+    "common_tasks": [
+      "Monitor dark web and threat feeds",
+      "Map TTPs to internal exposure",
+      "Collaborate with SOC and IR"
+    ],
+    "tools": [
+      "MISP",
+      "ThreatConnect",
+      "Recorded Future"
+    ],
+    "languages": [],
+    "frameworks": [
+      "MITRE ATT&CK",
+      "Kill Chain",
+      "STIX/TAXII"
+    ],
+    "influences": [
+      "SOC",
+      "IR",
+      "Risk",
+      "Compliance"
+    ],
+    "sample_questions": [
+      "What new TTPs are emerging from FIN groups?",
+      "Which APT campaigns are targeting the finance sector?"
+    ],
+    "success_indicators": [
+      "Threat detection before incidents",
+      "Improved threat-to-risk mapping",
+      "Timely, prioritized alerts"
+    ],
+    "keywords": [
+      "APT",
+      "TTP",
+      "dark web",
+      "threat feed",
+      "intel brief"
+    ]
+  }
+}

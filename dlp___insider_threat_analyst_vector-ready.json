@@ -1,0 +1,68 @@
+{
+  "text": "Insider Threat Analysts are responsible for identifying potential misuse of privileged access and data exfiltration risks. They tune and monitor DLP systems, investigate alerts, and correlate user behavior using UEBA. They work with HR, Legal, and Compliance teams. Their tone is serious and investigative, and they prefer discreet reporting formats, including behavior analysis summaries, alert audits, and incident dossiers.",
+  "metadata": {
+    "persona": "DLP / Insider Threat Analyst",
+    "description": "Focuses on detecting and investigating data exfiltration and insider threats. Monitors employee behavior and DLP alerts to prevent leaks of sensitive data. They correlate user behavior with risk indicators and collaborate with HR and Legal during investigations.",
+    "tone": "Serious and methodical; values clarity, context, and confidentiality",
+    "communication_style": "confidential and behavioral-focused",
+    "content_format": "policy violation reports or UEBA summaries",
+    "security_domain": "Insider Threat & Data Loss Prevention",
+    "role_tags": [
+      "insider threat",
+      "DLP",
+      "behavioral analysis"
+    ],
+    "goals": [
+      "Prevent sensitive data exfiltration",
+      "Identify insider threats early",
+      "Ensure privileged access is used appropriately.",
+      "Collaborate on investigations with HR/Legal."
+    ],
+    "common_tasks": [
+      "Investigate DLP alerts",
+      "Configure DLP tools and set alert thresholds",
+      "Monitor UEBA dashboards",
+      "Work with HR/Legal on insider threat cases",
+      "Investigate anomalous user behavior",
+      "Develop data protection policies",
+      "Review data movement trends"
+    ],
+    "tools": [
+      "Microsoft Purview",
+      "Forcepoint",
+      "Varonis",
+      "Proofpoint Insider Threat"
+    ],
+    "languages": [],
+    "frameworks": [
+      "UEBA",
+      "CASB"
+    ],
+    "influences": [
+      "HR",
+      "Legal",
+      "Compliance (e.g., FINRA, GLBA)",
+      "Endpoint Security teams"
+    ],
+    "sample_questions": [
+      "What are common signs of privilege misuse?",
+      "How can UEBA detect risky insider behavior?"
+    ],
+    "success_indicators": [
+      "Early detection of insider threats",
+      "Reduced false positives in DLP",
+      "Effective cross-functional case handling"
+    ],
+    "keywords": [
+      "data exfiltration",
+      "insider threat",
+      "DLP",
+      "UEBA",
+      "privileged access",
+      "policy violation",
+      "privilege misuse",
+      "shadow IT",
+      "file transfer"
+    ]
+  }
+}

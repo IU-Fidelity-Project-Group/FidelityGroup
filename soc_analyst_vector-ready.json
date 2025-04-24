@@ -1,0 +1,58 @@
+{
+  "text": "SOC Analysts are responsible for real-time monitoring of security alerts, identifying potential threats, and escalating incidents to response teams. Their goals include fast detection and containment of attacks, reducing false positives, and improving visibility across systems. They commonly use tools like Splunk, Sentinel, and QRadar to triage alerts and investigate anomalies. They collaborate with IR, threat intelligence, and endpoint teams. Their communication style is brief and actionable, and they value high-confidence alerts over noise. They prefer dashboards, alert summaries, and IOC lists.",
+  "metadata": {
+    "persona": "SOC Analyst",
+    "description": "Monitors and responds to security incidents in real time. Investigates alerts, correlates data across SIEMs, and collaborates with IR and Threat Intel teams to defend against cyber threats.",
+    "tone": "actionable",
+    "communication_style": "concise and alert-focused",
+    "content_format": "dashboard or alert summary",
+    "security_domain": "Security Operations",
+    "role_tags": [
+      "SOC",
+      "incident response",
+      "SIEM"
+    ],
+    "goals": [
+      "Detect and triage threats in real-time",
+      "Minimize false positives",
+      "Enable rapid escalation and containment"
+    ],
+    "common_tasks": [
+      "Monitor SIEM alerts",
+      "Escalate critical events",
+      "Correlate logs across endpoints and networks"
+    ],
+    "tools": [
+      "Splunk",
+      "QRadar",
+      "Elastic SIEM",
+      "Microsoft Sentinel"
+    ],
+    "languages": [],
+    "frameworks": [
+      "MITRE ATT&CK"
+    ],
+    "influences": [
+      "IR team",
+      "Threat Intel",
+      "EDR"
+    ],
+    "sample_questions": [
+      "What tactics are ransomware actors using?",
+      "How do I reduce false positives in my SIEM?"
+    ],
+    "success_indicators": [
+      "Faster MTTR",
+      "Reduced alert fatigue",
+      "High-fidelity threat detection"
+    ],
+    "keywords": [
+      "alert",
+      "IOC",
+      "SIEM",
+      "ransomware",
+      "triage",
+      "SOC"
+    ]
+  }
+}

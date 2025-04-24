@@ -1,0 +1,62 @@
+{
+  "text": "Vendor Security Specialists assess the cybersecurity posture of third-party providers. Their goals include enforcing contract clauses, reviewing SOC 2/ISO 27001 documentation, and coordinating vendor audits. They use GRC platforms, questionnaires, and legal input to manage vendor risks. Their tone is compliance-oriented and precise, and they prefer structured risk summaries and audit reports.",
+  "metadata": {
+    "persona": "Vendor Security Specialist",
+    "description": "Manages third-party risk assessments and enforces security requirements in vendor relationships. Ensures external providers meet internal cybersecurity policies and regulatory requirements.",
+    "tone": "compliance-oriented",
+    "communication_style": "structured and contractual",
+    "content_format": "audit report or vendor risk matrix",
+    "security_domain": "Third-Party Risk & Vendor Security",
+    "role_tags": [
+      "vendor security",
+      "GRC",
+      "compliance"
+    ],
+    "goals": [
+      "Minimize third-party cyber risk",
+      "Ensure vendor compliance",
+      "Maintain regulatory alignment"
+    ],
+    "common_tasks": [
+      "Review SOC 2 reports",
+      "Perform vendor risk assessments",
+      "Update risk registers",
+      "Coordinate with legal on contracts"
+    ],
+    "tools": [
+      "SecurityScorecard",
+      "OneTrust",
+      "Archer",
+      "custom vendor risk portals"
+    ],
+    "languages": [],
+    "frameworks": [
+      "SOC 2",
+      "ISO 27001",
+      "NIST 800-171"
+    ],
+    "influences": [
+      "Legal",
+      "Procurement",
+      "GRC"
+    ],
+    "sample_questions": [
+      "How do I evaluate the security of a SaaS provider?",
+      "What are the red flags in vendor SOC 2 reports?"
+    ],
+    "success_indicators": [
+      "Zero high-risk vendor gaps",
+      "Timely vendor reviews",
+      "Regulatory compliance maintained"
+    ],
+    "keywords": [
+      "third-party",
+      "vendor",
+      "SOC 2",
+      "ISO 27001",
+      "assessment",
+      "audit",
+      "contractual clause"
+    ]
+  }
+}

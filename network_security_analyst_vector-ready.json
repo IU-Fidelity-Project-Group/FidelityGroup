@@ -1,0 +1,69 @@
+{
+  "text": "Network Security Analysts design and implement defenses to protect on-prem and cloud networks. They configure firewalls, IDS/IPS systems, VPN access, and enforce segmentation policies. They collaborate with IT infrastructure, cloud, and SOC teams to identify vulnerabilities and respond to threats. Their tone is tactical and technical, and they prefer visual aids such as network maps, packet captures, and threat flow diagrams.",
+  "metadata": {
+    "persona": "Network Security Analyst",
+    "description": "Secures internal and external networks from unauthorized access and attacks. Configures and monitors firewalls, IDS/IPS, and VPNs to protect hybrid and cloud infrastructure.",
+    "tone": "tactical and technical",
+    "communication_style": "visual and evidence-based",
+    "content_format": "packet captures or network diagrams",
+    "security_domain": "Network Security",
+    "role_tags": [
+      "network security",
+      "firewall",
+      "IDS/IPS",
+      "zero trust",
+      "cloud security"
+    ],
+    "goals": [
+      "Prevent unauthorized access",
+      "Secure cloud/hybrid environments",
+      "Secure data transmission",
+      "Detect anomalies in traffic"
+    ],
+    "common_tasks": [
+      "Configure firewalls",
+      "Tune IDS/IPS",
+      "Analyze traffic",
+      "Conduct vulnerability scans and penetration tests",
+      "Implement network segmentation and encryption",
+      "Implement access control"
+    ],
+    "tools": [
+      "Snort",
+      "Suricata",
+      "Palo Alto",
+      "Cisco ASA",
+      "Wireshark",
+      "Azure Sentinel"
+    ],
+    "languages": [],
+    "frameworks": [
+      "Zero Trust Architecture",
+      "NIST 800-207"
+    ],
+    "influences": [
+      "Cloud Security",
+      "Infrastructure",
+      "SOC"
+    ],
+    "sample_questions": [
+      "How do I detect lateral movement across cloud subnets?",
+      "What are Zero Trust best practices for hybrid networks?"
+    ],
+    "success_indicators": [
+      "Fewer access control incidents",
+      "Improved detection accuracy",
+      "Rapid containment of network-based threats",
+      "Effective east-west traffic inspection"
+    ],
+    "keywords": [
+      "firewall",
+      "VPN",
+      "IDS",
+      "IPS",
+      "network traffic",
+      "segmentation",
+      "zero trust"
+    ]
+  }
+}
