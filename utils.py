@@ -118,11 +118,11 @@ def fetch_persona_vector(persona_name, endpoint_url, token, collection_name="pro
         "x-cassandra-token": token,
         "Content-Type": "application/json"
     }
+
     payload = {
         "filter": {
             "metadata.persona": {
-                "$regex": persona_name,
-                "$options": "i"
+                "$eq": persona_name
             }
         },
         "options": {
@@ -135,16 +135,16 @@ def fetch_persona_vector(persona_name, endpoint_url, token, collection_name="pro
     try:
         data = response.json()
         st.write("📦 Raw persona vector response:", data)
-
         docs = data.get("data", {}).get("documents", [])
         if docs and "$vector" in docs[0]:
             return np.array(docs[0]["$vector"], dtype=np.float32)
         else:
-            st.warning("No vector found in document.")
+            st.warning("No $vector found in fetched document.")
     except Exception as e:
-        st.error(f"Error fetching persona vector: {e}")
+        st.error(f"Error parsing vector: {e}")
 
     return np.zeros(1536, dtype=np.float32)
+
 
 
 def extract_keywords_from_text(text, openai_client):
