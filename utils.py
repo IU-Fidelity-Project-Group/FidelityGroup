@@ -3,6 +3,9 @@ import numpy as np
 import pandas as pd
 import requests
 import tiktoken
+from io import BytesIO
+from pdfminer.high_level import extract_text
+import zipfile
 
 encoder = tiktoken.encoding_for_model("gpt-4o")
 
@@ -31,16 +34,14 @@ def chunk_text_by_tokens(text, chunk_size=3072, overlap=256):
     return chunks
 
 def query_astra_vectors_rest(collection_name, endpoint_url, token, embedding, top_k=5):
-    url = f"{endpoint_url}/api/json/v1/{collection_name}/find"
+    url = f"{endpoint_url}/api/json/v1/{collection_name}/vector-search"
     headers = {
         "x-cassandra-token": token,
         "Content-Type": "application/json"
     }
     payload = {
-      "filter": {},
-      "options": {
-        "limit": 50
-      }
+        "vector": embedding.tolist(),
+        "limit": top_k
     }
     response = requests.post(url, headers=headers, json=payload)
     if response.status_code == 200:
@@ -57,10 +58,6 @@ def log_skipped_summary(log_entry):
     updated = pd.concat([existing, pd.DataFrame([log_entry])], ignore_index=True)
     updated.to_csv(log_file, index=False)
 
-from io import BytesIO
-from pdfminer.high_level import extract_text
-import zipfile
-
 def extract_text_from_pdf(file):
     return extract_text(BytesIO(file.read()))
 
@@ -69,8 +66,8 @@ def extract_text_from_zip(file):
         return "\n\n".join([
             extract_text(BytesIO(z.read(n))) for n in z.namelist() if n.lower().endswith(".pdf")
         ])
-def fetch_persona_names(endpoint_url, token, collection_name="profile_collection", top_k=5):
-    import requests
+
+def fetch_persona_names(endpoint_url, token, collection_name="profile_collection", top_k=50):
     dummy_vector = [0.0] * 1536
     url = f"{endpoint_url}/api/json/v1/{collection_name}/vector-search"
     headers = {
@@ -83,7 +80,28 @@ def fetch_persona_names(endpoint_url, token, collection_name="profile_collection
     }
     response = requests.post(url, headers=headers, json=payload)
     docs = response.json().get("data", {}).get("documents", [])
-    print("DEBUG: First doc response\n", docs[0] if docs else "No results.")
+    return sorted({
+        doc.get("metadata", {}).get("persona")
+        for doc in docs
+        if doc.get("metadata", {}).get("persona")
+    })
+
+def fetch_persona_description(persona_name, endpoint_url, token, collection_name="profile_collection"):
+    url = f"{endpoint_url}/api/json/v1/{collection_name}/find"
+    headers = {
+        "x-cassandra-token": token,
+        "Content-Type": "application/json"
+    }
+    payload = {
+        "filter": {
+            "metadata.persona": { "$eq": persona_name }
+        },
+        "options": {
+            "limit": 1
+        }
+    }
+    response = requests.post(url, headers=headers, json=payload)
+    docs = response.json().get("data", {}).get("documents", [])
     if docs and "metadata" in docs[0]:
-        return [docs[0]["metadata"].get("persona", "No persona field found")]
-    return ["No documents found"]
+        return docs[0]["metadata"].get("description", "")
+    return ""
