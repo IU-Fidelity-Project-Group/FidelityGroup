@@ -89,6 +89,12 @@ def chunk_text_by_tokens(text, chunk_size=3072, overlap=256):
     return chunks
 
 # --------------------
+# Similarity Check
+# --------------------
+def cosine_similarity(a, b):
+    return float(np.dot(a, b) / (np.linalg.norm(a) * np.linalg.norm(b)))
+
+# --------------------
 # Streamlit App
 # --------------------
 st.set_page_config(page_title="Persona Summarizer", layout="wide")
@@ -145,11 +151,8 @@ if generate:
             "role": "user",
             "content": f"""You are summarizing a technical cybersecurity document for a {persona}.\n\nYour goal is to extract and synthesize only the most relevant, actionable, and persona-specific insights from the chunk summaries provided below.\n\nExclude generalities and prioritize insights, findings, issues, or context that align with the responsibilities and focus areas of a {persona}.\n\nChunk Summaries:\n\n{"\n\n".join(chunk_summaries)}\n\nWrite a final executive summary that would be directly useful to a {persona}."""
         }
-        try:
-            
-    def cosine_similarity(a, b):
-        return float(np.dot(a, b) / (np.linalg.norm(a) * np.linalg.norm(b)))
-
+        try:   
+    
     persona_embedding = get_embedding(persona_description)
     raw_score = cosine_similarity(doc_embedding, persona_embedding)
     similarity_score = max(0.0, min(1.0, (raw_score + 1) / 2))  # scale -1 to 1 -> 0 to 1
