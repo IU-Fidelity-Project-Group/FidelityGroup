@@ -6,6 +6,8 @@ import tiktoken
 from io import BytesIO
 from pdfminer.high_level import extract_text
 import zipfile
+from astrapy import DataAPIClient
+import streamlit as st
 
 encoder = tiktoken.encoding_for_model("gpt-4o")
 
@@ -20,7 +22,10 @@ def get_embedding(text, openai_client, max_tokens=8192, max_chars=16000):
     return np.array(response.data[0].embedding, dtype=np.float32)
 
 def cosine_similarity(a, b):
-    return float(np.dot(a, b) / (np.linalg.norm(a) * np.linalg.norm(b)))
+    denom = np.linalg.norm(a) * np.linalg.norm(b)
+    if denom == 0:
+        return 0.0
+    return float(np.dot(a, b) / denom)
 
 def chunk_text_by_tokens(text, chunk_size=3072, overlap=256):
     tokens = encoder.encode(text)
@@ -106,29 +111,18 @@ def fetch_persona_description(persona_name, endpoint_url, token, collection_name
         return docs[0]["metadata"].get("description", "")
     return ""
 
-
 def fetch_persona_vector(persona_name, endpoint_url, token, collection_name="profile_collection"):
-    import streamlit as st
-    url = f"{endpoint_url}/api/json/v1/{collection_name}/find"
-    headers = {
-        "x-cassandra-token": token,
-        "Content-Type": "application/json"
-    }
-    payload = {
-        "options": {
-            "limit": 3
-        }
-    }
-    response = requests.post(url, headers=headers, json=payload)
     try:
-        docs = response.json().get("data", {}).get("documents", [])
-        st.write("🔍 Sample persona docs (no filter):", docs)
-        if docs and "vector" in docs[0]:
-            return np.array(docs[0]["vector"], dtype=np.float32)
+        client = DataAPIClient(token)
+        db = client.get_database_by_api_endpoint(endpoint_url)
+        collection = db[collection_name]
+        result = collection.find_one({"metadata.persona": {"$eq": persona_name}})
+        st.write("🔍 Persona doc fetched with astrapy:", result)
+        if result and "vector" in result:
+            return np.array(result["vector"], dtype=np.float32)
     except Exception as e:
-        st.error(f"Error parsing persona vector response: {e}")
+        st.error(f"Astra query error: {e}")
     return np.zeros(1536, dtype=np.float32)
-
 
 def extract_keywords_from_text(text, openai_client):
     system_prompt = "Extract the top 10 technical cybersecurity keywords, concepts, or entities from this document. Return them as a single comma-separated string."
