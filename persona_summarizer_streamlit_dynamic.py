@@ -9,7 +9,7 @@ from openai import OpenAI
 from utils import (
     extract_text_from_pdf, extract_text_from_zip,
     get_embedding, cosine_similarity, chunk_text_by_tokens,
-    query_astra_vectors_rest, log_skipped_summary
+    query_astra_vectors_rest, log_skipped_summary, fetch_persona_names 
 )
 
 # --------------------
@@ -33,7 +33,7 @@ glossary_collection = "glossarycollection"
 st.set_page_config(page_title="Persona Summarizer", layout="wide")
 st.title("Cybersecurity Persona-Based Summarizer")
 
-persona_list = ["Malware Analyst", "Application Security Analyst", "Threat Intelligence Analyst"]
+persona_list = fetch_persona_names(profile_endpoint, profile_token)
 persona = st.sidebar.selectbox("Select Persona", persona_list)
 
 uploaded_file = st.sidebar.file_uploader("Upload PDF or ZIP", type=["pdf", "zip"])
