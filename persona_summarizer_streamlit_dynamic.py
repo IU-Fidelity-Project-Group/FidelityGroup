@@ -59,8 +59,14 @@ if generate:
     persona_description = persona_context
 
     persona_embedding = get_embedding(persona_description, openai_client)
+    
+    st.write("Embedding lengths:", len(doc_embedding), len(persona_embedding))
+    st.write("First 5 values:", doc_embedding[:5], persona_embedding[:5])
+    st.write("Persona description:", persona_description[:200])
+    st.write("Doc text (truncated):", raw_text[:200])
+    
     score = cosine_similarity(doc_embedding, persona_embedding)
-    score = max(0.0, min(1.0, (score + 1) / 2))
+    # score = max(0.0, min(1.0, (score + 1) / 2))
 
     if score >= 0.8:
         label = "Good"
