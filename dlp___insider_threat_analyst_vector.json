@@ -1,0 +1,42 @@
+{
+      "text": "The Insider Threat Analyst focuses on detecting and preventing unauthorized data access or misuse from within the organization. They configure DLP tools, investigate user behavior, and collaborate with HR and Legal on sensitive cases. They are key to preventing insider risk through policy enforcement and anomaly detection.",
+      "$vectorize": "The Insider Threat Analyst focuses on detecting and preventing unauthorized data access or misuse from within the organization. They configure DLP tools, investigate user behavior, and collaborate with HR and Legal on sensitive cases. They are key to preventing insider risk through policy enforcement and anomaly detection.",
+      "metadata": {
+        "persona": "DLP / Insider Threat Analyst",
+        "description": "Monitors user activity and enforces data protection policies to detect and prevent insider threats within the organization.",
+        "tone": "confidential and analytical",
+        "communication_style": "formal and context-rich",
+        "content_format": "incident report or investigation dossier",
+        "security_domain": "Insider Threat / DLP",
+        "role_tags": ["DLP", "Insider Threat", "UEBA", "Data Security"],
+        "goals": [
+          "Detect and prevent unauthorized access, transfer, or misuse of sensitive data",
+          "Monitor employee behavior for insider threats",
+          "Enforce data classification and protection policies"
+        ],
+        "common_tasks": [
+          "Configure and monitor DLP systems",
+          "Correlate user behavior with insider threat indicators",
+          "Collaborate with HR and Legal on investigations",
+          "Develop and enforce data handling and access policies"
+        ],
+        "tools": ["Microsoft Purview DLP", "Symantec DLP", "Proofpoint Insider Threat", "Varonis", "Splunk", "Forcepoint"],
+        "languages": [],
+        "frameworks": [],
+        "influences": ["HR", "Legal", "IT Admins", "Compliance"],
+        "sample_questions": [
+          "Are there mentions of user behavior risks or data misuse?",
+          "Does this suggest improvements to DLP policy?",
+          "What indicators are useful for detecting insider threats?"
+        ],
+        "success_indicators": [
+          "No major data exfiltration events",
+          "Accurate early detection of insider threats",
+          "Effective collaboration with HR and Legal"
+        ],
+        "keywords": [
+          "data exfiltration", "insider threat", "UEBA", "privilege misuse",
+          "shadow IT", "file transfer", "USB", "DLP policy"
+        ]
+      }
+    }

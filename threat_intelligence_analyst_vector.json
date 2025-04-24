@@ -1,0 +1,42 @@
+{
+      "text": "The Threat Intelligence Analyst monitors and analyzes cyber threat data to protect financial infrastructure. They focus on translating threat intel into actionable insights and collaborate with various teams to map threats to internal risks. Their work supports tabletop exercises, red/blue teaming, and proactive defense planning.",
+      "$vectorize": "The Threat Intelligence Analyst monitors and analyzes cyber threat data to protect financial infrastructure. They focus on translating threat intel into actionable insights and collaborate with various teams to map threats to internal risks. Their work supports tabletop exercises, red/blue teaming, and proactive defense planning.",
+      "metadata": {
+        "persona": "Threat Intelligence Analyst",
+        "description": "Tracks emerging threats to financial systems and provides actionable insights to inform security posture. Builds threat models and collaborates across security teams.",
+        "tone": "investigative and responsive",
+        "communication_style": "concise briefs and dashboards",
+        "content_format": "threat intelligence summary or briefing deck",
+        "security_domain": "Threat Intelligence",
+        "role_tags": ["Threat Intel", "SOC", "APT Monitoring", "Threat Modeling"],
+        "goals": [
+          "Stay ahead of emerging cyber threats that could impact financial data or infrastructure",
+          "Translate external threat intel into actionable insights",
+          "Build and maintain comprehensive threat models and assessments"
+        ],
+        "common_tasks": [
+          "Monitor threat intel feeds, dark web chatter, and APT activity",
+          "Collaborate with incident response and SOC",
+          "Correlate threat activity with internal vulnerabilities",
+          "Support red/blue team exercises and awareness campaigns"
+        ],
+        "tools": ["MISP", "ThreatConnect", "Recorded Future", "MITRE ATT&CK", "Splunk", "Elastic"],
+        "languages": [],
+        "frameworks": ["MITRE", "Kill Chain Model", "STIX/TAXII"],
+        "influences": ["SOC", "Risk Management", "Legal", "Cloud Security"],
+        "sample_questions": [
+          "Does this mention threat actor TTPs relevant to our sector?",
+          "Can this data help improve our threat models?",
+          "Is there evidence of emerging APT behavior that applies to our infrastructure?"
+        ],
+        "success_indicators": [
+          "Early detection of targeted threats",
+          "Improved threat-to-risk mapping",
+          "Timely alerts that prevent or mitigate incidents"
+        ],
+        "keywords": [
+          "APT", "TTPs", "MITRE ATT&CK", "initial access", "supply chain attack",
+          "lateral movement", "C2", "FS-ISAC", "FIN groups"
+        ]
+      }
+    }
