@@ -5,8 +5,9 @@ import numpy as np
 import pandas as pd
 import requests
 import tiktoken
-from io import BytesIO
-from pdfminer.high_level import extract_text
+from pdfminer.high_level import extract_text_to_fp
+from pdfminer.layout import LAParams
+from io import BytesIO, StringIO
 import zipfile
 
 # Set up token encoder for managing OpenAI token limits
@@ -82,10 +83,25 @@ def log_skipped_summary(log_entry):
     updated.to_csv(log_file, index=False)
 
 # ------------------------------------------------------
-# Extracts text from a PDF file.
+# Extracts text from a PDF file while preserving layout structure
+# This version uses layout-aware parameters to better handle tables, columns, etc.
 # ------------------------------------------------------
 def extract_text_from_pdf(file):
-    return extract_text(BytesIO(file.read()))
+    output_string = StringIO()
+
+    # Define layout analysis parameters to preserve formatting and structure
+    laparams = LAParams(
+        line_overlap=0.5,
+        char_margin=2.0,
+        line_margin=0.5,
+        word_margin=0.1,
+        boxes_flow=0.5,
+        all_texts=True
+    )
+
+    # Extract structured text from the PDF using the parameters
+    extract_text_to_fp(BytesIO(file.read()), output_string, laparams=laparams)
+    return output_string.getvalue()
 
 # ------------------------------------------------------
 # Extracts text from all PDFs inside a ZIP file.
