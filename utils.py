@@ -3,9 +3,6 @@ import numpy as np
 import pandas as pd
 import requests
 import tiktoken
-from io import BytesIO
-from pdfminer.high_level import extract_text
-import zipfile
 
 encoder = tiktoken.encoding_for_model("gpt-4o")
 
@@ -58,6 +55,10 @@ def log_skipped_summary(log_entry):
     updated = pd.concat([existing, pd.DataFrame([log_entry])], ignore_index=True)
     updated.to_csv(log_file, index=False)
 
+from io import BytesIO
+from pdfminer.high_level import extract_text
+import zipfile
+
 def extract_text_from_pdf(file):
     return extract_text(BytesIO(file.read()))
 
@@ -66,8 +67,8 @@ def extract_text_from_zip(file):
         return "\n\n".join([
             extract_text(BytesIO(z.read(n))) for n in z.namelist() if n.lower().endswith(".pdf")
         ])
-
-def fetch_persona_names(endpoint_url, token, collection_name="profile_collection", top_k=50):
+def fetch_persona_names(endpoint_url, token, collection_name="profile_collection", top_k=5):
+    import requests
     dummy_vector = [0.0] * 1536
     url = f"{endpoint_url}/api/json/v1/{collection_name}/vector-search"
     headers = {
@@ -76,15 +77,11 @@ def fetch_persona_names(endpoint_url, token, collection_name="profile_collection
     }
     payload = {
         "vector": dummy_vector,
-        "limit": top_k,
-        "filter": {
-            "metadata.persona": { "$exists": True }
-        }
+        "limit": top_k
     }
     response = requests.post(url, headers=headers, json=payload)
     docs = response.json().get("data", {}).get("documents", [])
-    return sorted({
-        doc.get("metadata", {}).get("persona")
-        for doc in docs
-        if doc.get("metadata", {}).get("persona")
-    })
+    print("DEBUG: First doc response\n", docs[0] if docs else "No results.")
+    if docs and "metadata" in docs[0]:
+        return [docs[0]["metadata"].get("persona", "No persona field found")]
+    return ["No documents found"]
