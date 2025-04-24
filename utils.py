@@ -157,7 +157,7 @@ def fetch_persona_vector(persona_name, endpoint_url, token, collection_name="pro
         return np.zeros(1536, dtype=np.float32)
 
 # ------------------------------
-# Use OpenAI LLM to extract top 10 technical keywords from a document.
+# Use OpenAI LLM to extract top 20 technical keywords from a document.
 # Keywords are comma-separated for embedding or context generation.
 # ------------------------------
 def extract_keywords_from_text(text, openai_client):
@@ -167,6 +167,7 @@ def extract_keywords_from_text(text, openai_client):
     "network protocols, security tools). Only provide keywords if the content is clearly relevant "
     "to cybersecurity. If the content is unrelated (e.g., games, marketing, legal, finance), return an empty string. "
     "Avoid hallucination or general tech terms not tied to cybersecurity."
+    "Return as a single, comma-separated string of unique terms. Avoid general or vague terms."
     )
 
     messages = [
