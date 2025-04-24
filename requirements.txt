@@ -1,8 +1,6 @@
-streamlit>=1.4.0
-openai>=1.0.0
-PyPDF2
-tiktoken
-streamlit
-faiss-cpu
-astrapy
-numpy
+streamlit         # UI framework
+openai            # GPT + embeddings
+tiktoken          # Token counting / truncation
+numpy             # Vector manipulation
+pdfminer.six      # Structured PDF parsing (replaces PyPDF2)
+astrapy           # AstraDB integration
