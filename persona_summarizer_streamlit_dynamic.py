@@ -76,7 +76,9 @@ if generate:
             "filename": uploaded_file.name
         })
     else:
-        st.markdown(f"<h3 style='color:{{'green' if label == 'Good' else 'orange' if label == 'Moderate' else '#d4af37' if label == 'Fair' else 'red'}}'>{{score_display}}</h3>", unsafe_allow_html=True)
+        color = 'green' if label == 'Good' else 'orange' if label == 'Moderate' else '#d4af37' if label == 'Fair' else 'red'
+        st.markdown(f"<h3 style='color:{color}'>{score_display}</h3>", unsafe_allow_html=True)
+
 
         chunks = chunk_text_by_tokens(raw_text)
         chunk_summaries = []
