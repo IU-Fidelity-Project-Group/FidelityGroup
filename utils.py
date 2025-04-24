@@ -31,7 +31,7 @@ def chunk_text_by_tokens(text, chunk_size=3072, overlap=256):
     return chunks
 
 def query_astra_vectors_rest(collection_name, endpoint_url, token, embedding, top_k=5):
-    url = f"{endpoint_url}/api/json/v1/{collection_name}/vector-search"
+    url = f"{endpoint_url}/api/json/v1/{collection_name}/find"
     headers = {
         "x-cassandra-token": token,
         "Content-Type": "application/json"
