@@ -59,8 +59,8 @@ st.set_page_config(page_title="Persona Summarizer", layout="wide")
 st.title("Cybersecurity Persona-Based Summarizer")
 
 # Load personas from DB
-persona_docs = persona_collection.find()
-persona_list = [doc["name"] for doc in persona_docs["data"]["documents"]]
+persona_cursor = persona_collection.find()
+persona_list = [doc["name"] for doc in persona_cursor]
 persona = st.sidebar.selectbox("Select Persona", persona_list)
 
 # Fetch full persona description
