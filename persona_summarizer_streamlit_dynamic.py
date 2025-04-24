@@ -85,7 +85,7 @@ if generate:
         for i, chunk in enumerate(chunks):
             with st.spinner(f"Summarizing chunk {{i+1}}/{{len(chunks)}}..."):
                 persona_context = ""  # Could also pull from description if needed
-                user_msg = {{"role": "user", "content": f"{{chunk}}\n\nSummarize this chunk for a {{persona}}."}}
+                user_msg = {"role": "user", "content": f"{chunk}\n\nSummarize this chunk for a {persona}."}
                 try:
                     response = openai_client.chat.completions.create(
                         model="gpt-4o",
