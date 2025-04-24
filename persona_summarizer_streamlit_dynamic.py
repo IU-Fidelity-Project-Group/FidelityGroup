@@ -68,6 +68,7 @@ persona_list = [
 persona = st.sidebar.selectbox("Select Persona", persona_list)
 
 # Fetch full persona description
+persona_doc = persona_collection.find_one({"document.metadata.persona": {"$eq": persona}})
 persona_description = (
     persona_doc.get("document", {})
     .get("text", "")
