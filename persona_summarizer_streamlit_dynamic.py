@@ -22,8 +22,8 @@ glossary_client = DataAPIClient(st.secrets["astra"]["glossary_token"])
 persona_db = profile_client.get_database_by_api_endpoint("https://b897d7d9-a304-411c-abd0-836a9f38cc78-us-east1.apps.astra.datastax.com")
 glossary_db = glossary_client.get_database_by_api_endpoint("https://255cbde1-b53f-4dc1-b18b-8f9dbc13d28f-us-east1.apps.astra.datastax.com")
 
-persona_collection = persona_db["persona_vectors"]
-glossary_collection = glossary_db["glossary_vectors"]
+persona_collection = persona_db["profile_collection"]
+glossary_collection = glossary_db["glossarycollection"]
 
 # --------------------
 # Embedding
