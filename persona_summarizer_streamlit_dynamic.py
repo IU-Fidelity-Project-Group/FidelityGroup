@@ -68,8 +68,8 @@ persona_list = [
 persona = st.sidebar.selectbox("Select Persona", persona_list)
 
 # Fetch full persona description
-persona_doc = persona_collection.find_one({"document.metadata.persona": {"$eq": persona}})
-persona_metadata = persona_doc.get("document", {}).get("metadata", {}) if persona_doc else {}
+persona_doc = persona_collection.find_one({"metadata.persona": {"$eq": persona}})
+persona_metadata = persona_doc.get("metadata", {}) if persona_doc else {}
 persona_description = persona_metadata.get("description", "")
 
 uploaded_file = st.sidebar.file_uploader("Upload PDF or ZIP", type=["pdf", "zip"])
