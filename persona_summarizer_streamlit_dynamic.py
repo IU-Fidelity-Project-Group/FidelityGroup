@@ -27,12 +27,6 @@ glossary_endpoint = "https://255cbde1-b53f-4dc1-b18b-8f9dbc13d28f-us-east1.apps.
 profile_collection = "profile_collection"
 glossary_collection = "glossarycollection"
 
-def extract_text_from_zip(file):
-    with zipfile.ZipFile(file) as z:
-        return "\n\n".join([
-            extract_text(BytesIO(z.read(n))) for n in z.namelist() if n.lower().endswith(".pdf")
-        ])
-
 # --------------------
 # Streamlit App
 # --------------------
