@@ -1,3 +1,4 @@
+import time
 import os
 import zipfile
 import streamlit as st
@@ -6,6 +7,7 @@ from io import BytesIO
 from pdfminer.high_level import extract_text
 from openai import OpenAI
 from utils import (
+    extract_text_from_pdf, extract_text_from_zip,
     get_embedding, cosine_similarity, chunk_text_by_tokens,
     query_astra_vectors_rest, log_skipped_summary
 )
@@ -25,10 +27,7 @@ glossary_endpoint = "https://255cbde1-b53f-4dc1-b18b-8f9dbc13d28f-us-east1.apps.
 profile_collection = "profile_collection"
 glossary_collection = "glossarycollection"
 
-# --------------------
-# PDF Text Extraction
-# --------------------
-def extract_text_from_pdf(file):
+# PDF text functions moved to utils.py
     return extract_text(BytesIO(file.read()))
 
 def extract_text_from_zip(file):
@@ -49,6 +48,7 @@ persona = st.sidebar.selectbox("Select Persona", persona_list)
 uploaded_file = st.sidebar.file_uploader("Upload PDF or ZIP", type=["pdf", "zip"])
 max_toks = st.sidebar.slider("Max tokens per chunk", 100, 2000, 500, 100)
 override_skip = st.sidebar.checkbox("Force summary even if relevance is low")
+delay = st.sidebar.slider("Request Delay (seconds)", 0.0, 2.0, 0.2, 0.1)
 generate = st.sidebar.button("Generate Summary")
 
 if generate:
@@ -107,6 +107,7 @@ if generate:
                         max_tokens=max_toks
                     )
                     chunk_summaries.append(response.choices[0].message.content)
+                time.sleep(delay)
                 except Exception as e:
                     chunk_summaries.append(f"[Error summarizing chunk {i+1}: {e}]")
 
