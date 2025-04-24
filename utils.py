@@ -108,20 +108,27 @@ def fetch_persona_description(persona_name, endpoint_url, token, collection_name
 
 
 def fetch_persona_vector(persona_name, endpoint_url, token, collection_name="profile_collection"):
+    import streamlit as st
     url = f"{endpoint_url}/api/json/v1/{collection_name}/find"
     headers = {
         "x-cassandra-token": token,
         "Content-Type": "application/json"
     }
     payload = {
-        "options": {"limit": 3}
+        "options": {
+            "limit": 3
+        }
     }
     response = requests.post(url, headers=headers, json=payload)
-    docs = response.json().get("data", {}).get("documents", [])
-    print("🔍 Sample persona docs:", docs)
-    if docs and "vector" in docs[0]:
-        return np.array(docs[0]["vector"], dtype=np.float32)
+    try:
+        docs = response.json().get("data", {}).get("documents", [])
+        st.write("🔍 Sample persona docs (no filter):", docs)
+        if docs and "vector" in docs[0]:
+            return np.array(docs[0]["vector"], dtype=np.float32)
+    except Exception as e:
+        st.error(f"Error parsing persona vector response: {e}")
     return np.zeros(1536, dtype=np.float32)
+
 
 def extract_keywords_from_text(text, openai_client):
     system_prompt = "Extract the top 10 technical cybersecurity keywords, concepts, or entities from this document. Return them as a single comma-separated string."
