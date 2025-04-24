@@ -1,0 +1,27 @@
+{
+  "text": "",  // A clear, concise explanation of the term. This is what gets embedded for semantic search.
+
+  "metadata": {
+    "term": "",  // The exact term or acronym (e.g., "UEBA", "MITRE ATT&CK", "SSRF")
+
+    "definition": "",  // Full, readable definition of the term
+
+    "domain": "",  // The cybersecurity domain it belongs to (e.g., "Insider Threat", "Application Security", "Risk Management")
+
+    "category": "",  // Type of concept (e.g., "Framework", "Tool", "Attack Vector", "Policy")
+
+    "use_cases": [],  // Common scenarios or personas where this term is used (e.g., ["DLP Analyst", "SOC Analyst", "GRC Analyst"])
+
+    "related_terms": [],  // List of related glossary terms (e.g., ["Behavioral Analytics", "SIEM", "Anomaly Detection"])
+
+    "explanation_level": "",  // Target audience level (e.g., "technical", "non-technical", "executive")
+
+    "source": "",  // Where the definition came from (e.g., "NIST", "CISA", "Internal Docs")
+
+    "created_by": "",  // Optional: name or team that authored the entry
+
+    "created_date": "",  // Optional: ISO format date (e.g., "2025-04-02")
+
+    "tags": []  // Optional: for filtering or retrieval boost (e.g., ["zero trust", "analytics", "insider threat"])
+  }
+}
