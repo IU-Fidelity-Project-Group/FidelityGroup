@@ -1,10 +1,10 @@
-
 import os
 import zipfile
 import streamlit as st
 import numpy as np
 import tiktoken
-from PyPDF2 import PdfReader
+from io import BytesIO
+from pdfminer.high_level import extract_text
 from openai import OpenAI
 from astrapy import DataAPIClient
 
@@ -29,6 +29,9 @@ glossary_collection = glossary_db["glossarycollection"]
 # Embedding
 # --------------------
 def get_embedding(text):
+    tokens = encoder.encode(text)
+    if len(tokens) > 8192:
+        text = encoder.decode(tokens[:8192])
     response = openai_client.embeddings.create(input=text, model="text-embedding-3-small")
     return np.array(response.data[0].embedding, dtype=np.float32)
 
@@ -40,17 +43,30 @@ def query_astra_vectors(collection, embedding, top_k):
     return result["data"]["documents"]
 
 # --------------------
-# PDF Text Extraction
+# PDF Text Extraction using pdfminer
 # --------------------
 def extract_text_from_pdf(file):
-    reader = PdfReader(file)
-    return "\n\n".join([p.extract_text() for p in reader.pages if p.extract_text()])
+    return extract_text(BytesIO(file.read()))
 
 def extract_text_from_zip(file):
     with zipfile.ZipFile(file) as z:
         return "\n\n".join([
-            extract_text_from_pdf(z.open(n)) for n in z.namelist() if n.lower().endswith(".pdf")
+            extract_text(BytesIO(z.read(n))) for n in z.namelist() if n.lower().endswith(".pdf")
         ])
+
+# --------------------
+# Text Chunking
+# --------------------
+def chunk_text_by_tokens(text, chunk_size=3072, overlap=256):
+    tokens = encoder.encode(text)
+    chunks = []
+    start = 0
+    while start < len(tokens):
+        end = start + chunk_size
+        chunk = encoder.decode(tokens[start:end])
+        chunks.append(chunk)
+        start += chunk_size - overlap
+    return chunks
 
 # --------------------
 # Streamlit App
@@ -73,7 +89,7 @@ persona_metadata = persona_doc.get("metadata", {}) if persona_doc else {}
 persona_description = persona_metadata.get("description", "")
 
 uploaded_file = st.sidebar.file_uploader("Upload PDF or ZIP", type=["pdf", "zip"])
-max_toks = st.sidebar.slider("Max tokens", 100, 2000, 500, 100)
+max_toks = st.sidebar.slider("Max tokens per chunk", 100, 2000, 500, 100)
 generate = st.sidebar.button("Generate Summary")
 
 if generate:
@@ -83,32 +99,31 @@ if generate:
 
     raw_text = extract_text_from_zip(uploaded_file) if uploaded_file.name.endswith(".zip") else extract_text_from_pdf(uploaded_file)
 
-    def truncate(text, persona_text, max_toks):
-        pre = "Document content:\n\n"
-        post = f"\n\nPlease summarize for a {persona}."
-        overhead = len(encoder.encode(persona_text + pre + post)) + max_toks + 50
-        doc_tokens = encoder.encode(text)
-        return encoder.decode(doc_tokens[:max(0, 30000 - overhead)])
-
-    doc_text = truncate(raw_text, persona_description, max_toks)
-    doc_embedding = get_embedding(doc_text)
-
+    doc_embedding = get_embedding(raw_text)
     glossary_hits = query_astra_vectors(glossary_collection, doc_embedding, top_k=5)
     glossary_context = "\n\n".join([d.get("text", "") for d in glossary_hits])
 
     persona_hits = query_astra_vectors(persona_collection, doc_embedding, top_k=1)
     persona_context = "\n\n".join([d.get("text", "") for d in persona_hits])
 
-    system_msg = {"role": "system", "content": persona_description}
-    user_msg = {"role": "user", "content": f"{persona_context}\n\n{glossary_context}\n\n{doc_text}\n\nPlease summarize for a {persona}."}
+    text_chunks = chunk_text_by_tokens(raw_text, chunk_size=3072, overlap=256)
+    chunk_summaries = []
 
-    try:
-        response = openai_client.chat.completions.create(
-            model="gpt-4o",
-            messages=[system_msg, user_msg],
-            max_tokens=max_toks
-        )
-        st.subheader(uploaded_file.name)
-        st.write(response.choices[0].message.content)
-    except Exception as e:
-        st.error(f"OpenAI Error: {e}")
+    for i, chunk in enumerate(text_chunks):
+        with st.spinner(f"Summarizing chunk {i+1}/{len(text_chunks)}..."):
+            system_msg = {"role": "system", "content": persona_description}
+            user_msg = {"role": "user", "content": f"{persona_context}\n\n{glossary_context}\n\n{chunk}\n\nPlease summarize this chunk for a {persona}."}
+            try:
+                response = openai_client.chat.completions.create(
+                    model="gpt-4o",
+                    messages=[system_msg, user_msg],
+                    max_tokens=max_toks
+                )
+                chunk_summaries.append(response.choices[0].message.content)
+            except Exception as e:
+                chunk_summaries.append(f"[Error summarizing chunk {i+1}: {e}]")
+
+    st.subheader("Combined Summary")
+    for i, summary in enumerate(chunk_summaries, 1):
+        st.markdown(f"### Chunk {i}")
+        st.write(summary)
