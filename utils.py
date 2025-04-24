@@ -3,31 +3,21 @@ import numpy as np
 import pandas as pd
 import requests
 import tiktoken
-import time
+from io import BytesIO
+from pdfminer.high_level import extract_text
+import zipfile
 
 encoder = tiktoken.encoding_for_model("gpt-4o")
 
-def get_embedding(text, openai_client, max_tokens=8192, max_chars=16000, retries=3):
-    if not text or not isinstance(text, str):
-        raise ValueError("Input to get_embedding must be a non-empty string.")
-
+def get_embedding(text, openai_client, max_tokens=8192, max_chars=16000):
     tokens = encoder.encode(text)
     if len(tokens) > max_tokens:
-        text = encoder.decode(tokens[:max_tokens])
+        tokens = tokens[:max_tokens]
+    text = encoder.decode(tokens)
     if len(text) > max_chars:
         text = text[:max_chars]
-
-    for attempt in range(retries):
-        try:
-            response = openai_client.embeddings.create(input=text, model="text-embedding-3-small")
-            return np.array(response.data[0].embedding, dtype=np.float32)
-        except openai.RateLimitError:
-            wait_time = (2 ** attempt) * 2
-            time.sleep(wait_time)
-        except Exception as e:
-            raise RuntimeError(f"OpenAI embedding failed: {str(e)}")
-
-    raise RuntimeError("OpenAI embedding failed after multiple retries due to rate limits.")
+    response = openai_client.embeddings.create(input=text, model="text-embedding-3-small")
+    return np.array(response.data[0].embedding, dtype=np.float32)
 
 def cosine_similarity(a, b):
     return float(np.dot(a, b) / (np.linalg.norm(a) * np.linalg.norm(b)))
@@ -67,3 +57,12 @@ def log_skipped_summary(log_entry):
         existing = pd.DataFrame()
     updated = pd.concat([existing, pd.DataFrame([log_entry])], ignore_index=True)
     updated.to_csv(log_file, index=False)
+
+def extract_text_from_pdf(file):
+    return extract_text(BytesIO(file.read()))
+
+def extract_text_from_zip(file):
+    with zipfile.ZipFile(file) as z:
+        return "\n\n".join([
+            extract_text(BytesIO(z.read(n))) for n in z.namelist() if n.lower().endswith(".pdf")
+        ])
