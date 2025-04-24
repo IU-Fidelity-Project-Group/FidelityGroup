@@ -64,8 +64,8 @@ if generate:
     score = max(0.0, min(1.0, (score + 1) / 2))
     
     st.write("Persona vector (sum):", np.sum(persona_vector))
-    # st.write("Doc embedding (sum):", np.sum(doc_embedding))
-    # st.write("Cosine similarity raw:", cosine_similarity(doc_embedding, persona_vector))
+    st.write("Doc embedding (sum):", np.sum(doc_embedding))
+    st.write("Cosine similarity raw:", cosine_similarity(doc_embedding, persona_vector))
 
     if score >= 0.8:
         label = "Good"
