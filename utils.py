@@ -112,6 +112,7 @@ def fetch_persona_description(persona_name, endpoint_url, token, collection_name
     return ""
 
 def fetch_persona_vector(persona_name, endpoint_url, token, collection_name="profile_collection"):
+    import streamlit as st
     url = f"{endpoint_url}/api/json/v1/{collection_name}/find"
     headers = {
         "x-cassandra-token": token,
@@ -119,22 +120,32 @@ def fetch_persona_vector(persona_name, endpoint_url, token, collection_name="pro
     }
     payload = {
         "filter": {
-            "metadata.persona": { "$eq": persona_name }
+            "metadata.persona": {
+                "$regex": persona_name,
+                "$options": "i"
+            }
         },
         "options": {
             "limit": 1,
             "includeFields": ["$vector"]
         }
     }
+
     response = requests.post(url, headers=headers, json=payload)
     try:
-        docs = response.json().get("data", {}).get("documents", [])
+        data = response.json()
+        st.write("📦 Raw persona vector response:", data)
+
+        docs = data.get("data", {}).get("documents", [])
         if docs and "$vector" in docs[0]:
             return np.array(docs[0]["$vector"], dtype=np.float32)
+        else:
+            st.warning("No vector found in document.")
     except Exception as e:
-        import streamlit as st
         st.error(f"Error fetching persona vector: {e}")
+
     return np.zeros(1536, dtype=np.float32)
+
 
 def extract_keywords_from_text(text, openai_client):
     system_prompt = "Extract the top 10 technical cybersecurity keywords, concepts, or entities from this document. Return them as a single comma-separated string."
