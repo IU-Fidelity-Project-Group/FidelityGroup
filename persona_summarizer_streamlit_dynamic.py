@@ -69,13 +69,8 @@ persona = st.sidebar.selectbox("Select Persona", persona_list)
 
 # Fetch full persona description
 persona_doc = persona_collection.find_one({"document.metadata.persona": {"$eq": persona}})
-persona_description = (
-    persona_doc.get("document", {})
-    .get("text", "")
-    if persona_doc else ""
-)
-
-persona_description = persona_doc["data"]["document"]["text"] if persona_doc["status"]["code"] == 200 else ""
+persona_metadata = persona_doc.get("document", {}).get("metadata", {}) if persona_doc else {}
+persona_description = persona_metadata.get("description", "")
 
 uploaded_file = st.sidebar.file_uploader("Upload PDF or ZIP", type=["pdf", "zip"])
 max_toks = st.sidebar.slider("Max tokens", 100, 2000, 500, 100)
