@@ -60,20 +60,11 @@ st.title("Cybersecurity Persona-Based Summarizer")
 
 # Load personas from DB
 persona_cursor = persona_collection.find()
-
-# DEBUG: Check what's coming from the DB
-persona_docs_preview = list(persona_cursor)[:3]  # Preview the first few
-st.write("🔍 Sample persona docs from DB:", persona_docs_preview)
-
-# Try to extract persona names
-persona_list = []
-for doc in persona_docs_preview:
-    try:
-        persona_name = doc["document"]["metadata"]["persona"]
-        persona_list.append(persona_name)
-    except KeyError as e:
-        st.warning(f"⚠️ Missing field in document: {e}")
-
+persona_list = [
+    doc["metadata"]["persona"]
+    for doc in persona_cursor
+    if "metadata" in doc and "persona" in doc["metadata"]
+]
 persona = st.sidebar.selectbox("Select Persona", persona_list)
 
 # Fetch full persona description
