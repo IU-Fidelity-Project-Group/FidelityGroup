@@ -37,9 +37,7 @@ def query_astra_vectors_rest(collection_name, endpoint_url, token, embedding, to
         "Content-Type": "application/json"
     }
     payload = {
-      "filter": {
-        "metadata.persona": { "$exists": true }
-      },
+      "filter": {},
       "options": {
         "limit": 50
       }
