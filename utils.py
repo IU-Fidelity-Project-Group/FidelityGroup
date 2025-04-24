@@ -37,10 +37,12 @@ def query_astra_vectors_rest(collection_name, endpoint_url, token, embedding, to
         "Content-Type": "application/json"
     }
     payload = {
-        "filter": {},
-        "options": {
-            "limit": 1
-        }
+      "filter": {
+        "metadata.persona": { "$exists": true }
+      },
+      "options": {
+        "limit": 50
+      }
     }
     response = requests.post(url, headers=headers, json=payload)
     if response.status_code == 200:
