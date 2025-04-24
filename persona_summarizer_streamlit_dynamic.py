@@ -28,11 +28,15 @@ glossary_collection = glossary_db["glossarycollection"]
 # --------------------
 # Embedding
 # --------------------
-def get_embedding(text):
+def get_embedding(text, max_tokens=8192, max_chars=16000):
     tokens = encoder.encode(text)
-    if len(tokens) > 8192:
-        st.warning(f"Truncating embedding input from {len(tokens)} tokens to 8192.")
-        text = encoder.decode(tokens[:8192])
+    if len(tokens) > max_tokens:
+        st.warning(f"⚠️ Truncating embedding input from {len(tokens)} tokens to {max_tokens}")
+        tokens = tokens[:max_tokens]
+    text = encoder.decode(tokens)
+    if len(text) > max_chars:
+        st.warning(f"⚠️ Truncating embedding input from {len(text)} characters to {max_chars}")
+        text = text[:max_chars]
     response = openai_client.embeddings.create(input=text, model="text-embedding-3-small")
     return np.array(response.data[0].embedding, dtype=np.float32)
 
