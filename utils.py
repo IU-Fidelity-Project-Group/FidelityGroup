@@ -118,7 +118,7 @@ def fetch_persona_vector(persona_name, endpoint_url, token, collection_name="pro
     }
     response = requests.post(url, headers=headers, json=payload)
     docs = response.json().get("data", {}).get("documents", [])
-    st.write("🔍 Sample persona docs:", docs)
+    print("🔍 Sample persona docs:", docs)
     if docs and "vector" in docs[0]:
         return np.array(docs[0]["vector"], dtype=np.float32)
     return np.zeros(1536, dtype=np.float32)
