@@ -162,7 +162,7 @@ def fetch_persona_vector(persona_name, endpoint_url, token, collection_name="pro
 # ------------------------------
 def extract_keywords_from_text(text, openai_client):
     system_prompt = (
-    "You are an expert cybersecurity analyst. Your task is to extract up to 10 technical keywords, "
+    "You are an expert cybersecurity analyst. Your task is to extract up to 20 technical keywords, "
     "concepts, or entities strictly related to cybersecurity (e.g., threat actors, vulnerabilities, "
     "network protocols, security tools). Only provide keywords if the content is clearly relevant "
     "to cybersecurity. If the content is unrelated (e.g., games, marketing, legal, finance), return an empty string. "
