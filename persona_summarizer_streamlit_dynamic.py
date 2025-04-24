@@ -50,14 +50,13 @@ if generate:
 
     raw_text = extract_text_from_zip(uploaded_file) if uploaded_file.name.endswith(".zip") else extract_text_from_pdf(uploaded_file)
     doc_embedding = get_embedding(raw_text, openai_client)
-
+    persona_embedding = get_embedding(persona, openai_client)
+    
     glossary_hits = query_astra_vectors_rest(glossary_collection, glossary_endpoint, glossary_token, doc_embedding, top_k=5)
     glossary_context = "\n\n".join([d.get("text", "") for d in glossary_hits])
 
     persona_context = "\n\n".join([d.get("text", "") for d in query_astra_vectors_rest(profile_collection, profile_endpoint, profile_token, doc_embedding, top_k=1)])
     persona_description = fetch_persona_description(persona, profile_endpoint, profile_token)
-
-    persona_embedding = get_embedding(persona_description, openai_client)
 
     st.write("Embedding lengths:", len(doc_embedding), len(persona_embedding))
     st.write("First 5 values:", doc_embedding[:5], persona_embedding[:5])
