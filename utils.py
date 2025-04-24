@@ -105,3 +105,40 @@ def fetch_persona_description(persona_name, endpoint_url, token, collection_name
     if docs and "metadata" in docs[0]:
         return docs[0]["metadata"].get("description", "")
     return ""
+
+
+def fetch_persona_vector(persona_name, endpoint_url, token, collection_name="profile_collection"):
+    url = f"{endpoint_url}/api/json/v1/{collection_name}/find"
+    headers = {
+        "x-cassandra-token": token,
+        "Content-Type": "application/json"
+    }
+    payload = {
+        "filter": {
+            "metadata.persona": { "$eq": persona_name }
+        },
+        "options": {
+            "limit": 1
+        }
+    }
+    response = requests.post(url, headers=headers, json=payload)
+    docs = response.json().get("data", {}).get("documents", [])
+    if docs and "vector" in docs[0]:
+        return np.array(docs[0]["vector"], dtype=np.float32)
+    return np.zeros(1536, dtype=np.float32)
+
+def extract_keywords_from_text(text, openai_client):
+    system_prompt = "Extract the top 10 technical cybersecurity keywords, concepts, or entities from this document. Return them as a single comma-separated string."
+    messages = [
+        {"role": "system", "content": system_prompt},
+        {"role": "user", "content": text}
+    ]
+    try:
+        response = openai_client.chat.completions.create(
+            model="gpt-4o",
+            messages=messages,
+            max_tokens=150
+        )
+        return response.choices[0].message.content.strip()
+    except Exception as e:
+        return ""
