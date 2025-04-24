@@ -34,6 +34,7 @@ st.set_page_config(page_title="Persona Summarizer", layout="wide")
 st.title("Cybersecurity Persona-Based Summarizer")
 
 persona_list = fetch_persona_names(profile_endpoint, profile_token)
+st.write("📋 Personas from DB:", persona_list)
 persona = st.sidebar.selectbox("Select Persona", persona_list)
 
 uploaded_file = st.sidebar.file_uploader("Upload PDF or ZIP", type=["pdf", "zip"])
