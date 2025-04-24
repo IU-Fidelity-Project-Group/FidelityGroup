@@ -44,7 +44,7 @@ def get_embedding(text, max_tokens=8192, max_chars=16000):
 # Astra Vector Search
 # --------------------
 def query_astra_vectors(collection, embedding, top_k):
-    result = collection.find(vector=embedding, limit=top_k)
+    result = collection.search(vector=embedding, limit=top_k)
     return result["data"]["documents"]
 
 # --------------------
