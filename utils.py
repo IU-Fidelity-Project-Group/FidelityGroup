@@ -148,13 +148,17 @@ def fetch_persona_vector(persona_name, endpoint_url, token, collection_name="pro
             "metadata.persona": { "$eq": persona_name }
         },
         "options": {
-            "limit": 1
+            "limit": 1,
+            "includeFields": ["$vector"]
         }
     }
     response = requests.post(url, headers=headers, json=payload)
-    data = response.json().get("data", {}).get("documents", [])
-    if data and "$vector" in data[0]:
-        return np.array(data[0]["$vector"], dtype=np.float32)
+    try:
+        docs = response.json().get("data", {}).get("documents", [])
+        if docs and "$vector" in docs[0]:
+            return np.array(docs[0]["$vector"], dtype=np.float32)
+    except Exception:
+        pass
     return np.zeros(1536, dtype=np.float32)
 
 # ------------------------------
