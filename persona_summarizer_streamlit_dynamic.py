@@ -107,7 +107,7 @@ if generate:
                         max_tokens=max_toks
                     )
                     chunk_summaries.append(response.choices[0].message.content)
-                time.sleep(delay)
+                    time.sleep(delay)
                 except Exception as e:
                     chunk_summaries.append(f"[Error summarizing chunk {i+1}: {e}]")
 
