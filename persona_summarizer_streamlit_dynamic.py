@@ -1,3 +1,4 @@
+
 import os
 import zipfile
 import requests
@@ -100,6 +101,7 @@ persona = st.sidebar.selectbox("Select Persona", persona_list)
 # Simplified for REST: Description can come from vector search
 uploaded_file = st.sidebar.file_uploader("Upload PDF or ZIP", type=["pdf", "zip"])
 max_toks = st.sidebar.slider("Max tokens per chunk", 100, 2000, 500, 100)
+override_skip = st.sidebar.checkbox("Force summary even if relevance is low")
 generate = st.sidebar.button("Generate Summary")
 
 if generate:
@@ -144,12 +146,71 @@ if generate:
             "content": f"""You are summarizing a technical cybersecurity document for a {persona}.\n\nYour goal is to extract and synthesize only the most relevant, actionable, and persona-specific insights from the chunk summaries provided below.\n\nExclude generalities and prioritize insights, findings, issues, or context that align with the responsibilities and focus areas of a {persona}.\n\nChunk Summaries:\n\n{"\n\n".join(chunk_summaries)}\n\nWrite a final executive summary that would be directly useful to a {persona}."""
         }
         try:
-            final_summary = openai_client.chat.completions.create(
+            
+    def cosine_similarity(a, b):
+        return float(np.dot(a, b) / (np.linalg.norm(a) * np.linalg.norm(b)))
+
+    persona_embedding = get_embedding(persona_description)
+    raw_score = cosine_similarity(doc_embedding, persona_embedding)
+    similarity_score = max(0.0, min(1.0, (raw_score + 1) / 2))  # scale -1 to 1 -> 0 to 1
+
+    if similarity_score >= 0.8:
+        score_label = "Good"
+    elif similarity_score >= 0.6:
+        score_label = "Moderate"
+    elif similarity_score >= 0.4:
+        score_label = "Fair"
+    else:
+        score_label = "Poor"
+
+    suitability_score = f"Suitability Score: {similarity_score:.2f} ({score_label})"
+
+    final_summary = openai_client.chat.completions.create(
+
                 model="gpt-4o",
                 messages=[system_msg, final_msg],
                 max_tokens=600
             )
-            st.subheader("Final Executive Summary")
+            
+    
+    if similarity_score < 0.4 and not override_skip:
+        st.subheader(suitability_score)
+        st.warning("⚠️ This document has limited relevance to the selected persona. Summary generation has been skipped.")
+
+        # Log skip to dashboard CSV
+        log_entry = {
+            "timestamp": datetime.now().isoformat(),
+            "persona": persona,
+            "score": round(similarity_score, 3),
+            "label": score_label,
+            "filename": uploaded_file.name
+        }
+
+        import pandas as pd
+        log_file = "skipped_summaries.csv"
+        try:
+            existing = pd.read_csv(log_file)
+            updated = pd.concat([existing, pd.DataFrame([log_entry])], ignore_index=True)
+        except FileNotFoundError:
+            updated = pd.DataFrame([log_entry])
+
+        updated.to_csv(log_file, index=False)
+
+        st.subheader(suitability_score)
+        st.warning("⚠️ This document has limited relevance to the selected persona. Summary generation has been skipped.")
+    else:
+        if score_label == "Good":
+            st.markdown(f"<h3 style='color:green'>{suitability_score}</h3>", unsafe_allow_html=True)
+        elif score_label == "Moderate":
+            st.markdown(f"<h3 style='color:orange'>{suitability_score}</h3>", unsafe_allow_html=True)
+        elif score_label == "Fair":
+            st.markdown(f"<h3 style='color:#d4af37'>{suitability_score}</h3>", unsafe_allow_html=True)
+        else:
+            st.markdown(f"<h3 style='color:red'>{suitability_score}</h3>", unsafe_allow_html=True)
+
+        st.subheader("Final Executive Summary")
+        st.write(final_summary.choices[0].message.content)
+
             st.write(final_summary.choices[0].message.content)
         except Exception as e:
             st.error(f"[Error generating final summary: {e}]")
