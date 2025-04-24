@@ -68,7 +68,12 @@ persona_list = [
 persona = st.sidebar.selectbox("Select Persona", persona_list)
 
 # Fetch full persona description
-persona_doc = persona_collection.find_one({"name": {"$eq": persona}})
+persona_description = (
+    persona_doc.get("document", {})
+    .get("text", "")
+    if persona_doc else ""
+)
+
 persona_description = persona_doc["data"]["document"]["text"] if persona_doc["status"]["code"] == 200 else ""
 
 uploaded_file = st.sidebar.file_uploader("Upload PDF or ZIP", type=["pdf", "zip"])
