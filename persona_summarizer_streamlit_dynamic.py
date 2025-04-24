@@ -29,7 +29,7 @@ glossary_collection = "glossarycollection"
 st.set_page_config(page_title="Persona Summarizer", layout="wide")
 st.title("Cybersecurity Persona-Based Summarizer")
 
-persona_list = ["Malware Analyst", "Application Security Analyst", "Threat Intelligence Analyst", "SOC Analyst", "Cyber Risk Analyst / CISO", "Network Security Analyst", "Vendor Security Specialist", "DLP / Insider Threat Analyst"]
+persona_list = fetch_persona_names(profile_endpoint, profile_token, profile_collection)
 persona = st.sidebar.selectbox("Select Persona", persona_list)
 
 uploaded_file = st.sidebar.file_uploader("Upload PDF or ZIP", type=["pdf", "zip"])
@@ -46,18 +46,14 @@ if generate:
     raw_text = extract_text_from_zip(uploaded_file) if uploaded_file.name.endswith(".zip") else extract_text_from_pdf(uploaded_file)
 
     keyword_text = extract_keywords_from_text(raw_text, openai_client)
-    st.write("📌 Extracted keywords:", keyword_text)
-
+    
     doc_embedding = get_embedding(keyword_text, openai_client)
     persona_vector = fetch_persona_vector(persona, profile_endpoint, profile_token)
 
     score = cosine_similarity(doc_embedding, persona_vector)
     score = max(0.0, min(1.0, (score + 1) / 2))
     
-    st.write("Persona vector (sum):", np.sum(persona_vector))
-    st.write("Doc embedding (sum):", np.sum(doc_embedding))
-    st.write("Cosine similarity raw:", cosine_similarity(doc_embedding, persona_vector))
-
+            
     if score >= 0.8:
         label = "Good"
     elif score >= 0.6:
