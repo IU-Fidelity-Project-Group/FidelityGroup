@@ -114,16 +114,11 @@ def fetch_persona_vector(persona_name, endpoint_url, token, collection_name="pro
         "Content-Type": "application/json"
     }
     payload = {
-        "filter": {
-            "metadata.persona": { "$eq": persona_name }
-        },
-        "options": {
-            "limit": 1
-        }
+        "options": {"limit": 3}
     }
     response = requests.post(url, headers=headers, json=payload)
     docs = response.json().get("data", {}).get("documents", [])
-    st.write("🔍 Persona fetch raw docs:", docs)
+    st.write("🔍 Sample persona docs:", docs)
     if docs and "vector" in docs[0]:
         return np.array(docs[0]["vector"], dtype=np.float32)
     return np.zeros(1536, dtype=np.float32)
