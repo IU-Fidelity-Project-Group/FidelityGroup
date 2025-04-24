@@ -157,7 +157,6 @@ def fetch_persona_vector(persona_name, endpoint_url, token, collection_name="pro
         return np.array(data[0]["$vector"], dtype=np.float32)
     return np.zeros(1536, dtype=np.float32)
 
-
 # ------------------------------
 # Use OpenAI LLM to extract top 10 technical keywords from a document.
 # Keywords are comma-separated for embedding or context generation.
