@@ -77,13 +77,19 @@ def fetch_persona_names(endpoint_url, token, collection_name="profile_collection
     payload = {
         "options": {"limit": top_k}
     }
-    response = requests.post(url, headers=headers, json=payload)
-    docs = response.json().get("data", {}).get("documents", [])
-    return sorted({
-        doc.get("metadata", {}).get("persona")
-        for doc in docs
-        if doc.get("metadata", {}).get("persona")
-    })
+    try:
+        response = requests.post(url, headers=headers, json=payload)
+        response.raise_for_status()
+        docs = response.json().get("data", {}).get("documents", [])
+        return sorted({
+            doc.get("metadata", {}).get("persona", "")
+            for doc in docs
+            if "metadata" in doc and "persona" in doc["metadata"]
+        })
+    except Exception as e:
+        print(f"⚠️ Error fetching persona names: {e}")
+        return []
+
 
 def fetch_persona_vector(persona_name, endpoint_url, token, collection_name="profile_collection"):
     url = f"{endpoint_url}/api/json/v1/{collection_name}/find"
