@@ -31,6 +31,7 @@ glossary_collection = glossary_db["glossarycollection"]
 def get_embedding(text):
     tokens = encoder.encode(text)
     if len(tokens) > 8192:
+        st.warning(f"Truncating embedding input from {len(tokens)} tokens to 8192.")
         text = encoder.decode(tokens[:8192])
     response = openai_client.embeddings.create(input=text, model="text-embedding-3-small")
     return np.array(response.data[0].embedding, dtype=np.float32)
@@ -98,6 +99,7 @@ if generate:
         st.stop()
 
     raw_text = extract_text_from_zip(uploaded_file) if uploaded_file.name.endswith(".zip") else extract_text_from_pdf(uploaded_file)
+    raw_text = raw_text.replace("\\n", " ").replace("\\u200b", "").strip()
 
     doc_embedding = get_embedding(raw_text)
     glossary_hits = query_astra_vectors(glossary_collection, doc_embedding, top_k=5)
