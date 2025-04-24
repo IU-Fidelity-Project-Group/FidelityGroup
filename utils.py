@@ -139,28 +139,23 @@ def fetch_persona_names(endpoint_url, token, collection_name="profile_collection
 # Used for cosine similarity with document embeddings.
 # ------------------------------
 def fetch_persona_vector(persona_name, endpoint_url, token, collection_name="profile_collection"):
-    url = f"{endpoint_url}/api/json/v1/{collection_name}/find"
-    headers = {
-        "x-cassandra-token": token,
-        "Content-Type": "application/json"
-    }
-    payload = {
-        "filter": {
-            "metadata.persona": { "$eq": persona_name }
-        },
-        "options": {
-            "limit": 1,
-            "includeFields": ["$vector"]
-        }
-    }
-    response = requests.post(url, headers=headers, json=payload)
+    client = DataAPIClient(token)
+    db = client.get_database_by_api_endpoint(endpoint_url)
+    collection = db.get_collection(collection_name)
+
     try:
-        docs = response.json().get("data", {}).get("documents", [])
-        if docs and "$vector" in docs[0]:
-            return np.array(docs[0]["$vector"], dtype=np.float32)
-    except Exception:
-        pass
-    return np.zeros(1536, dtype=np.float32)
+        result = collection.find_one(
+            {"metadata.persona": persona_name},
+            projection={"$vector": True}
+        )
+        if result and "$vector" in result:
+            return np.array(result["$vector"], dtype=np.float32)
+        else:
+            print("⚠️ No $vector field found in the document.")
+            return np.zeros(1536, dtype=np.float32)
+    except Exception as e:
+        print(f"⚠️ Error fetching persona vector: {e}")
+        return np.zeros(1536, dtype=np.float32)
 
 # ------------------------------
 # Use OpenAI LLM to extract top 10 technical keywords from a document.
