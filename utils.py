@@ -1,5 +1,6 @@
 # utils.py
 
+import zipfile
 import openai
 import numpy as np
 import pandas as pd
@@ -8,7 +9,7 @@ import tiktoken
 from io import BytesIO, StringIO
 from pdfminer.high_level import extract_text_to_fp
 from pdfminer.layout import LAParams
-import zipfile
+from astrapy import DataAPIClient
 
 # ------------------------------
 # Initialize tokenizer for consistent token handling with OpenAI models
