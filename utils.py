@@ -118,21 +118,20 @@ def extract_text_from_zip(file):
 # Dynamically populates dropdown menu in Streamlit UI.
 # ------------------------------
 def fetch_persona_names(endpoint_url, token, collection_name="profile_collection"):
-    url = f"{endpoint_url}/api/json/v1/{collection_name}/find"
-    headers = {
-        "x-cassandra-token": token,
-        "Content-Type": "application/json"
-    }
-    payload = {
-        "options": {}
-    }
-    response = requests.post(url, headers=headers, json=payload)
-    docs = response.json().get("data", {}).get("documents", [])
-    return sorted({
-        doc.get("metadata", {}).get("persona")
-        for doc in docs
-        if doc.get("metadata", {}).get("persona")
-    })
+    client = DataAPIClient(token)
+    db = client.get_database_by_api_endpoint(endpoint_url)
+    collection = db.get_collection(collection_name)
+
+    try:
+        docs = collection.find()
+        return sorted({
+            doc.get("metadata", {}).get("persona")
+            for doc in docs
+            if doc.get("metadata", {}).get("persona")
+        })
+    except Exception as e:
+        print(f"⚠️ Error fetching persona names: {e}")
+        return []
 
 # ------------------------------
 # Fetch the precomputed vector for a given persona.
