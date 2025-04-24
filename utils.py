@@ -152,13 +152,14 @@ def fetch_persona_vector(persona_name, endpoint_url, token, collection_name="pro
         }
     }
     response = requests.post(url, headers=headers, json=payload)
-    docs = response.json().get("data", {}).get("documents", [])
-    if not docs:
-        raise ValueError(f"No document found for persona '{persona_name}'")
-    doc = docs[0]
-    if "$vector" in doc:
-        return np.array(doc["$vector"], dtype=np.float32)
+    try:
+        docs = response.json().get("data", {}).get("documents", [])
+        if docs and "$vector" in docs[0]:
+            return np.array(docs[0]["$vector"], dtype=np.float32)
+    except Exception as e:
+        print(f"Error parsing persona vector response: {e}")
     return np.zeros(1536, dtype=np.float32)
+
 
 # ------------------------------
 # Use OpenAI LLM to extract top 10 technical keywords from a document.
