@@ -7,9 +7,6 @@ from io import BytesIO
 from pdfminer.high_level import extract_text
 from openai import OpenAI
 from utils import (
-# --------------------
-# Configuration & Setup
-# --------------------
     extract_text_from_pdf, extract_text_from_zip,
     get_embedding, cosine_similarity, chunk_text_by_tokens,
     query_astra_vectors_rest, log_skipped_summary,
@@ -17,6 +14,9 @@ from utils import (
     extract_keywords_from_text
 )
 
+# --------------------
+# Configuration & Setup
+# --------------------
 OPENAI_API_KEY = st.secrets["openai"]["api_key"]
 openai_client = OpenAI(api_key=OPENAI_API_KEY)
 
