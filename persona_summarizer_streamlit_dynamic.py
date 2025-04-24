@@ -1,3 +1,4 @@
+
 import time
 import os
 import zipfile
@@ -10,12 +11,10 @@ from utils import (
     extract_text_from_pdf, extract_text_from_zip,
     get_embedding, cosine_similarity, chunk_text_by_tokens,
     query_astra_vectors_rest, log_skipped_summary,
-    fetch_persona_names, fetch_persona_description
+    fetch_persona_names, fetch_persona_vector,
+    extract_keywords_from_text
 )
 
-# --------------------
-# Config
-# --------------------
 OPENAI_API_KEY = st.secrets["openai"]["api_key"]
 openai_client = OpenAI(api_key=OPENAI_API_KEY)
 
@@ -28,9 +27,6 @@ glossary_endpoint = "https://255cbde1-b53f-4dc1-b18b-8f9dbc13d28f-us-east1.apps.
 profile_collection = "profile_collection"
 glossary_collection = "glossarycollection"
 
-# --------------------
-# Streamlit App
-# --------------------
 st.set_page_config(page_title="Persona Summarizer", layout="wide")
 st.title("Cybersecurity Persona-Based Summarizer")
 
@@ -49,21 +45,14 @@ if generate:
         st.stop()
 
     raw_text = extract_text_from_zip(uploaded_file) if uploaded_file.name.endswith(".zip") else extract_text_from_pdf(uploaded_file)
-    doc_embedding = get_embedding(raw_text, openai_client)
-    persona_embedding = get_embedding(persona, openai_client)
-    
-    glossary_hits = query_astra_vectors_rest(glossary_collection, glossary_endpoint, glossary_token, doc_embedding, top_k=5)
-    glossary_context = "\n\n".join([d.get("text", "") for d in glossary_hits])
 
-    persona_context = "\n\n".join([d.get("text", "") for d in query_astra_vectors_rest(profile_collection, profile_endpoint, profile_token, doc_embedding, top_k=1)])
-    persona_description = fetch_persona_description(persona, profile_endpoint, profile_token)
+    keyword_text = extract_keywords_from_text(raw_text, openai_client)
+    st.write("📌 Extracted keywords:", keyword_text)
 
-    st.write("Embedding lengths:", len(doc_embedding), len(persona_embedding))
-    st.write("First 5 values:", doc_embedding[:5], persona_embedding[:5])
-    st.write("Persona description:", persona_description[:200])
-    st.write("Doc text (truncated):", raw_text[:200])
+    doc_embedding = get_embedding(keyword_text, openai_client)
+    persona_vector = fetch_persona_vector(persona, profile_endpoint, profile_token)
 
-    score = cosine_similarity(doc_embedding, persona_embedding)
+    score = cosine_similarity(doc_embedding, persona_vector)
     score = max(0.0, min(1.0, (score + 1) / 2))
 
     if score >= 0.8:
@@ -94,12 +83,12 @@ if generate:
         chunk_summaries = []
         for i, chunk in enumerate(chunks):
             with st.spinner(f"Summarizing chunk {{i+1}}/{{len(chunks)}}..."):
-                system_msg = {{"role": "system", "content": persona_description}}
-                user_msg = {{"role": "user", "content": f"{{persona_context}}\n\n{{glossary_context}}\n\n{{chunk}}\n\nPlease summarize this chunk for a {{persona}}."}}
+                persona_context = ""  # Could also pull from description if needed
+                user_msg = {{"role": "user", "content": f"{{chunk}}\n\nSummarize this chunk for a {{persona}}."}}
                 try:
                     response = openai_client.chat.completions.create(
                         model="gpt-4o",
-                        messages=[system_msg, user_msg],
+                        messages=[{"role": "system", "content": f"You are a {persona}."}, user_msg],
                         max_tokens=max_toks
                     )
                     chunk_summaries.append(response.choices[0].message.content)
@@ -111,8 +100,6 @@ if generate:
 
 Your goal is to extract and synthesize only the most relevant, actionable, and persona-specific insights from the chunk summaries provided below.
 
-Exclude generalities and prioritize insights, findings, issues, or context that align with the responsibilities and focus areas of a {{persona}}.
-
 Chunk Summaries:
 {{'\n\n'.join(chunk_summaries)}}
 
@@ -120,7 +107,7 @@ Write a final executive summary that would be directly useful to a {{persona}}."
         try:
             response = openai_client.chat.completions.create(
                 model="gpt-4o",
-                messages=[system_msg, {{"role": "user", "content": final_prompt}}],
+                messages=[{"role": "system", "content": f"You are a {persona}."}, {"role": "user", "content": final_prompt}],
                 max_tokens=600
             )
             st.subheader("Final Executive Summary")
