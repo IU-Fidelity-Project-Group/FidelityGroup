@@ -66,7 +66,7 @@ if generate:
     st.write("Doc text (truncated):", raw_text[:200])
     
     score = cosine_similarity(doc_embedding, persona_embedding)
-    # score = max(0.0, min(1.0, (score + 1) / 2))
+    score = max(0.0, min(1.0, (score + 1) / 2))
 
     if score >= 0.8:
         label = "Good"
