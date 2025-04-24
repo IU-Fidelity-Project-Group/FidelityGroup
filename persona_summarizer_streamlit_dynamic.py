@@ -65,11 +65,11 @@ def extract_text_from_zip(file):
 def get_embedding(text, max_tokens=8192, max_chars=16000):
     tokens = encoder.encode(text)
     if len(tokens) > max_tokens:
-        # st.warning(f"⚠️ Truncating embedding input from {len(tokens)} tokens to {max_tokens}")
+        st.warning(f"⚠️ Truncating embedding input from {len(tokens)} tokens to {max_tokens}")
         tokens = tokens[:max_tokens]
     text = encoder.decode(tokens)
     if len(text) > max_chars:
-        # st.warning(f"⚠️ Truncating embedding input from {len(text)} chars to {max_chars}")
+        st.warning(f"⚠️ Truncating embedding input from {len(text)} chars to {max_chars}")
         text = text[:max_chars]
     response = openai_client.embeddings.create(input=text, model="text-embedding-3-small")
     return np.array(response.data[0].embedding, dtype=np.float32)
@@ -186,8 +186,16 @@ if generate:
             "filename": uploaded_file.name
         }
 
+
         import pandas as pd
         log_file = "skipped_summaries.csv"
+        try:
+            existing = pd.read_csv(log_file)
+            updated = pd.concat([existing, pd.DataFrame([log_entry])], ignore_index=True)
+        except FileNotFoundError:
+            updated = pd.DataFrame([log_entry])
+        updated.to_csv(log_file, index=False)
+    
         try:
             existing = pd.read_csv(log_file)
             updated = pd.concat([existing, pd.DataFrame([log_entry])], ignore_index=True)
