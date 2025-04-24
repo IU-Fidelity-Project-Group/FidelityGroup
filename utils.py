@@ -6,8 +6,6 @@ import tiktoken
 from io import BytesIO
 from pdfminer.high_level import extract_text
 import zipfile
-from astrapy import DataAPIClient
-import streamlit as st
 
 encoder = tiktoken.encoding_for_model("gpt-4o")
 
@@ -22,10 +20,7 @@ def get_embedding(text, openai_client, max_tokens=8192, max_chars=16000):
     return np.array(response.data[0].embedding, dtype=np.float32)
 
 def cosine_similarity(a, b):
-    denom = np.linalg.norm(a) * np.linalg.norm(b)
-    if denom == 0:
-        return 0.0
-    return float(np.dot(a, b) / denom)
+    return float(np.dot(a, b) / (np.linalg.norm(a) * np.linalg.norm(b)))
 
 def chunk_text_by_tokens(text, chunk_size=3072, overlap=256):
     tokens = encoder.encode(text)
@@ -73,15 +68,13 @@ def extract_text_from_zip(file):
         ])
 
 def fetch_persona_names(endpoint_url, token, collection_name="profile_collection", top_k=50):
-    dummy_vector = [0.0] * 1536
-    url = f"{endpoint_url}/api/json/v1/{collection_name}/vector-search"
+    url = f"{endpoint_url}/api/json/v1/{collection_name}/find"
     headers = {
         "x-cassandra-token": token,
         "Content-Type": "application/json"
     }
     payload = {
-        "vector": dummy_vector,
-        "limit": top_k
+        "options": {"limit": top_k}
     }
     response = requests.post(url, headers=headers, json=payload)
     docs = response.json().get("data", {}).get("documents", [])
@@ -90,58 +83,3 @@ def fetch_persona_names(endpoint_url, token, collection_name="profile_collection
         for doc in docs
         if doc.get("metadata", {}).get("persona")
     })
-
-def fetch_persona_description(persona_name, endpoint_url, token, collection_name="profile_collection"):
-    url = f"{endpoint_url}/api/json/v1/{collection_name}/find"
-    headers = {
-        "x-cassandra-token": token,
-        "Content-Type": "application/json"
-    }
-    payload = {
-        "filter": {
-            "metadata.persona": { "$eq": persona_name }
-        },
-        "options": {
-            "limit": 1
-        }
-    }
-    response = requests.post(url, headers=headers, json=payload)
-    docs = response.json().get("data", {}).get("documents", [])
-    if docs and "metadata" in docs[0]:
-        return docs[0]["metadata"].get("description", "")
-    return ""
-
-def fetch_persona_vector(persona_name, endpoint_url, token, collection_name="profile_collection"):
-    client = DataAPIClient(token)
-    db = client.get_database_by_api_endpoint(endpoint_url)
-    collection = db.get_collection(collection_name)
-
-    try:
-        result = collection.find_one(
-            {"metadata.persona": persona_name},
-            projection={"$vector": True}
-        )
-        if result and "$vector" in result:
-            return np.array(result["$vector"], dtype=np.float32)
-        else:
-            print("⚠️ No $vector field found in the document.")
-            return np.zeros(1536, dtype=np.float32)
-    except Exception as e:
-        print(f"⚠️ Error fetching persona vector: {e}")
-        return np.zeros(1536, dtype=np.float32)
-
-def extract_keywords_from_text(text, openai_client):
-    system_prompt = "Extract the top 10 technical cybersecurity keywords, concepts, or entities from this document. Return them as a single comma-separated string."
-    messages = [
-        {"role": "system", "content": system_prompt},
-        {"role": "user", "content": text}
-    ]
-    try:
-        response = openai_client.chat.completions.create(
-            model="gpt-4o",
-            messages=messages,
-            max_tokens=150
-        )
-        return response.choices[0].message.content.strip()
-    except Exception as e:
-        return ""
