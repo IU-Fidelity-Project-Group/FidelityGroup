@@ -97,14 +97,15 @@ if generate:
                 except Exception as e:
                     chunk_summaries.append(f"[Error summarizing chunk {{i+1}}: {{e}}]")
 
-        final_prompt = f"""You are summarizing a technical cybersecurity document for a {{persona}}.
-
+        final_prompt = f"""
+You are summarizing a technical cybersecurity document for a {persona}.
 Your goal is to extract and synthesize only the most relevant, actionable, and persona-specific insights from the chunk summaries provided below.
-
+Focus on findings, issues, techniques, and concepts that align with the responsibilities and decision-making scope of a {persona}. Avoid generic restatements or overly broad summaries.
 Chunk Summaries:
-{{'\n\n'.join(chunk_summaries)}}
+{'\n\n'.join(chunk_summaries)}
+Write a final executive summary that would be directly useful to a {persona}.
+"""
 
-Write a final executive summary that would be directly useful to a {{persona}}."""
         try:
             response = openai_client.chat.completions.create(
                 model="gpt-4o",
