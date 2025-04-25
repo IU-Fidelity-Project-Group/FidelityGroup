@@ -39,7 +39,7 @@ def safe_cosine_similarity(a, b):
         return 0.0
     raw = np.dot(a, b) / (np.linalg.norm(a) * np.linalg.norm(b))
     adjusted = (raw + 1) / 2
-    penalized = adjusted ** 2
+    penalized = adjusted ** 1.5
     return round(min(max(penalized, 0.0), 1.0), 4)
 
 # ------------------------------
