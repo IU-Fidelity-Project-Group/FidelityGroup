@@ -153,8 +153,6 @@ The following glossary terms may help you understand the source text:
 {glossary_context}
 Chunk Summaries:
 {'\n\n'.join(chunk_summaries)}
-
-
 Generate a summary that would be maximally useful to the **{persona}**, written in their tone and aligned with their goals.
 """
 
