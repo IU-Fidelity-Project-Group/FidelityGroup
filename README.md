@@ -50,12 +50,9 @@ This repo does **not** include:
 2. In that directory, create a file called `secrets.toml`.
 3. Add the following content to `secrets.toml`, replacing the placeholder values:
 
-`[openai]
-api_key = "sk-your-openai-key"
+`[openai] api_key = "sk-your-openai-key"`
 
-[astra] 
-profile_token = "your-profile-db-token" 
-glossary_token = "your-glossary-db-token"`
+`[astra] /profile_token = "your-profile-db-token" /glossary_token = "your-glossary-db-token"`
 
 
 ### Step 3: Run the App
