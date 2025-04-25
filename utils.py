@@ -47,7 +47,13 @@ def safe_cosine_similarity(a, b):
 # Supports long document splitting for LLM summarization.
 # ------------------------------
 def chunk_text_by_tokens(text, chunk_size=3072, overlap=256):
-    tokens = encoder.encode(text)
+    try:
+        tokens = encoder.encode(text, allowed_special={"<|endoftext|>", "<|startoftext|>"})
+    except ValueError:
+        # Remove or escape problematic characters if they cause encoding issues
+        text = text.encode("utf-8", errors="ignore").decode("utf-8", errors="ignore")
+        tokens = encoder.encode(text, allowed_special={"<|endoftext|>", "<|startoftext|>"})
+
     chunks = []
     start = 0
     while start < len(tokens):
@@ -56,6 +62,7 @@ def chunk_text_by_tokens(text, chunk_size=3072, overlap=256):
         chunks.append(chunk)
         start += chunk_size - overlap
     return chunks
+
 
 # ------------------------------
 # Query Astra DB via REST for vector similarity search.
