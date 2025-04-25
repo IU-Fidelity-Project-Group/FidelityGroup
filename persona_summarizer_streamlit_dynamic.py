@@ -130,10 +130,8 @@ if generate:
 
         final_prompt = f"""
 You are summarizing a cybersecurity document for a specific security persona: {persona} who {persona_metadata.get('description', '')}
-
 Use the following persona profile to guide how the summary is written and what it emphasizes. Do **not** repeat the persona details in the output.
 Only provide a **persona-informed summary of the document**, written in the appropriate tone and format.
-
 ---
 **Tone**: {persona_metadata.get('tone', '')}
 **Communication Style**: {persona_metadata.get('communication_style', '')}
@@ -143,7 +141,6 @@ Only provide a **persona-informed summary of the document**, written in the appr
 **Frameworks They Typically Use** (optional): {persona_metadata.get('frameworks', '')}
 **Cybersecurity Domain this summary should focus on**: {persona_metadata.get('security_domain', '')}
 ---
-
 **Instructions for Summary Generation**:
 - Use the tone and communication style specified by the persona.
 - Structure the output using the preferred format (e.g., brief, actionable bullet points, policy summary, technical note).
@@ -152,14 +149,11 @@ Only provide a **persona-informed summary of the document**, written in the appr
 - If applicable, mention opportunities for integration with tools or policy controls.
 - Avoid generic language — focus on what this persona needs to act or escalate.
 - In the title of the response, declare what persona this summary is intended for.
-
 The following glossary terms may help you understand the source text:
 {glossary_context}
-
 Chunk Summaries:
-{'
+{'\n\n'.join(chunk_summaries)}
 
-'.join(chunk_summaries)}
 
 Generate a summary that would be maximally useful to the **{persona}**, written in their tone and aligned with their goals.
 """
