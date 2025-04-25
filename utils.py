@@ -32,10 +32,15 @@ def get_embedding(text, openai_client, max_tokens=8192, max_chars=16000):
 
 # ------------------------------
 # Compute cosine similarity between two vectors.
-# Measures how aligned the document content is with the persona.
+# Applies a nonlinear squashing to penalize weak similarity and reduce false midrange scores.
 # ------------------------------
-def cosine_similarity(a, b):
-    return float(np.dot(a, b) / (np.linalg.norm(a) * np.linalg.norm(b)))
+def safe_cosine_similarity(a, b):
+    if np.linalg.norm(a) == 0 or np.linalg.norm(b) == 0:
+        return 0.0
+    raw = np.dot(a, b) / (np.linalg.norm(a) * np.linalg.norm(b))
+    adjusted = (raw + 1) / 2
+    penalized = adjusted ** 2
+    return round(min(max(penalized, 0.0), 1.0), 4)
 
 # ------------------------------
 # Chunk text based on token count with optional overlap.
@@ -136,6 +141,7 @@ def fetch_persona_names(endpoint_url, token, collection_name="profile_collection
 # ------------------------------
 # Fetch the precomputed vector for a given persona.
 # Used for cosine similarity with document embeddings.
+# Returns the $vector as numpy array or zeros fallback.
 # ------------------------------
 def fetch_persona_vector(persona_name, endpoint_url, token, collection_name="profile_collection"):
     client = DataAPIClient(token)
@@ -144,8 +150,7 @@ def fetch_persona_vector(persona_name, endpoint_url, token, collection_name="pro
 
     try:
         result = collection.find_one(
-            {"metadata.persona": persona_name},
-            projection={"$vector": True}
+            {"metadata.persona": persona_name}, projection={"$vector": True}
         )
         if result and "$vector" in result:
             return np.array(result["$vector"], dtype=np.float32)
@@ -157,8 +162,9 @@ def fetch_persona_vector(persona_name, endpoint_url, token, collection_name="pro
         return np.zeros(1536, dtype=np.float32)
 
 # ------------------------------
-# Use OpenAI LLM to extract top 20 technical keywords from a document.
-# Keywords are comma-separated for embedding or context generation.
+# Use OpenAI LLM to extract up to 20 highly relevant cybersecurity keywords.
+# If the document is unrelated to cybersecurity, return an empty string.
+# Prevents hallucination and enforces strict contextual filtering.
 # ------------------------------
 def extract_keywords_from_text(text, openai_client):
     system_prompt = (
