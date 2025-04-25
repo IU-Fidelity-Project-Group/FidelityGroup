@@ -52,7 +52,7 @@ This repo does **not** include:
 
 `[openai] api_key = "sk-your-openai-key"`
 
-`[astra] /profile_token = "your-profile-db-token" /glossary_token = "your-glossary-db-token"`
+`[astra]  profile_token = "your-profile-db-token"  glossary_token = "your-glossary-db-token"`
 
 
 ### Step 3: Run the App
