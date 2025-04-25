@@ -1,14 +1,14 @@
 # utils.py
 
-import zipfile
 import openai
 import numpy as np
 import pandas as pd
 import requests
 import tiktoken
 from io import BytesIO, StringIO
-from pdfminer.high_level import extract_text_to_fp
+from pdfminer.high_level import extract_text_to_fp, extract_text
 from pdfminer.layout import LAParams
+import zipfile
 from astrapy import DataAPIClient
 
 # ------------------------------
@@ -61,7 +61,7 @@ def chunk_text_by_tokens(text, chunk_size=3072, overlap=256):
 # Query Astra DB via REST for vector similarity search.
 # Sends vector and retrieves top-k similar documents.
 # ------------------------------
-def query_astra_vectors_rest(collection_name, endpoint_url, token, embedding, top_k=5):
+def query_astra_vectors_rest(collection_name, endpoint_url, token, embedding, top_k=10):
     url = f"{endpoint_url}/api/json/v1/{collection_name}/vector-search"
     headers = {
         "x-cassandra-token": token,
@@ -114,44 +114,35 @@ def extract_text_from_pdf(file):
 def extract_text_from_zip(file):
     with zipfile.ZipFile(file) as z:
         return "\n\n".join([
-            extract_text_from_pdf(BytesIO(z.read(n)))
+            extract_text(BytesIO(z.read(n)), laparams=LAParams())
             for n in z.namelist() if n.lower().endswith(".pdf")
         ])
 
 # ------------------------------
-# Retrieve all persona labels from Astra DB profile collection.
-# Dynamically populates dropdown menu in Streamlit UI.
+# Retrieve all persona labels from Astra DB profile collection using AstraPy client.
+# Ensures reliable and consistent access to the persona list.
 # ------------------------------
 def fetch_persona_names(endpoint_url, token, collection_name="profile_collection"):
     client = DataAPIClient(token)
     db = client.get_database_by_api_endpoint(endpoint_url)
     collection = db.get_collection(collection_name)
-
     try:
-        docs = collection.find()
-        return sorted({
-            doc.get("metadata", {}).get("persona")
-            for doc in docs
-            if doc.get("metadata", {}).get("persona")
-        })
+        all_docs = collection.find()
+        return sorted({doc["metadata"]["persona"] for doc in all_docs if "metadata" in doc and "persona" in doc["metadata"]})
     except Exception as e:
         print(f"⚠️ Error fetching persona names: {e}")
         return []
 
 # ------------------------------
-# Fetch the precomputed vector for a given persona.
-# Used for cosine similarity with document embeddings.
+# Fetch the precomputed vector for a given persona using AstraPy client.
 # Returns the $vector as numpy array or zeros fallback.
 # ------------------------------
 def fetch_persona_vector(persona_name, endpoint_url, token, collection_name="profile_collection"):
     client = DataAPIClient(token)
     db = client.get_database_by_api_endpoint(endpoint_url)
     collection = db.get_collection(collection_name)
-
     try:
-        result = collection.find_one(
-            {"metadata.persona": persona_name}, projection={"$vector": True}
-        )
+        result = collection.find_one({"metadata.persona": persona_name}, projection={"$vector": True})
         if result and "$vector" in result:
             return np.array(result["$vector"], dtype=np.float32)
         else:
@@ -162,20 +153,35 @@ def fetch_persona_vector(persona_name, endpoint_url, token, collection_name="pro
         return np.zeros(1536, dtype=np.float32)
 
 # ------------------------------
+# Fetch full metadata for a persona from Astra DB profile collection.
+# Used for tailoring the LLM prompt formatting and summary tone.
+# ------------------------------
+def fetch_persona_metadata(persona_name, endpoint_url, token, collection_name="profile_collection"):
+    client = DataAPIClient(token)
+    db = client.get_database_by_api_endpoint(endpoint_url)
+    collection = db.get_collection(collection_name)
+    try:
+        result = collection.find_one({"metadata.persona": persona_name}, projection={"metadata": True})
+        if result and "metadata" in result:
+            return result["metadata"]
+    except Exception as e:
+        print(f"⚠️ Error fetching persona metadata: {e}")
+    return {}
+
+# ------------------------------
 # Use OpenAI LLM to extract up to 20 highly relevant cybersecurity keywords.
 # If the document is unrelated to cybersecurity, return an empty string.
 # Prevents hallucination and enforces strict contextual filtering.
 # ------------------------------
 def extract_keywords_from_text(text, openai_client):
     system_prompt = (
-    "You are an expert cybersecurity analyst. Your task is to extract up to 20 technical keywords, "
-    "concepts, or entities strictly related to cybersecurity (e.g., threat actors, vulnerabilities, "
-    "network protocols, security tools). Only provide keywords if the content is clearly relevant "
-    "to cybersecurity. If the content is unrelated (e.g., games, marketing, legal, finance), return an empty string. "
-    "Avoid hallucination or general tech terms not tied to cybersecurity."
-    "Return as a single, comma-separated string of unique terms. Avoid general or vague terms."
+        "You are an expert cybersecurity analyst. Your task is to extract up to 20 technical keywords, "
+        "concepts, or entities strictly related to cybersecurity (e.g., threat actors, vulnerabilities, "
+        "network protocols, security tools). Only provide keywords if the content is clearly relevant "
+        "to cybersecurity. If the content is unrelated (e.g., games, marketing, legal, finance), return an empty string. "
+        "Avoid hallucination or general tech terms not tied to cybersecurity. "
+        "Return as a single, comma-separated string of unique terms. Avoid general or vague terms."
     )
-
     messages = [
         {"role": "system", "content": system_prompt},
         {"role": "user", "content": text}
@@ -184,8 +190,20 @@ def extract_keywords_from_text(text, openai_client):
         response = openai_client.chat.completions.create(
             model="gpt-4o",
             messages=messages,
-            max_tokens=150
+            max_tokens=200
         )
         return response.choices[0].message.content.strip()
     except Exception as e:
+        print(f"⚠️ Error extracting keywords: {e}")
         return ""
+
+# ------------------------------
+# Query glossary collection with keyword embedding for relevant contextual hits.
+# Returns concatenated glossary definitions for final summary prompt enhancement.
+# ------------------------------
+def fetch_glossary_context(keywords, openai_client, glossary_collection, glossary_endpoint, glossary_token, top_k=10):
+    if not keywords.strip():
+        return ""
+    embedding = get_embedding(keywords, openai_client)
+    hits = query_astra_vectors_rest(glossary_collection, glossary_endpoint, glossary_token, embedding, top_k=top_k)
+    return "\n\n".join([d.get("text", "") for d in hits])
