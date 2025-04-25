@@ -51,7 +51,7 @@ This repo does **not** include:
 3. Add the following content to `secrets.toml`, replacing the placeholder values:
 
 `[openai]`  
-`'api_key = "sk-your-openai-key"`
+`api_key = "sk-your-openai-key"`
 
 `[astra]`    
 `profile_token = "your-profile-db-token"`  
