@@ -3,6 +3,7 @@ import os
 import zipfile
 import streamlit as st
 import numpy as np
+import json
 from io import BytesIO
 from pdfminer.high_level import extract_text
 from openai import OpenAI
@@ -41,7 +42,7 @@ persona_list = fetch_persona_names(profile_endpoint, profile_token, profile_coll
 persona = st.sidebar.selectbox("Select Persona", persona_list)
 
 # UI widgets for input
-uploaded_file = st.sidebar.file_uploader("Upload PDF or ZIP", type=["pdf", "zip"])
+uploaded_file = st.sidebar.file_uploader("Upload PDF, ZIP, TXT, or JSON", type=["pdf", "zip", "txt", "json"])
 max_toks = st.sidebar.slider("Max Summary Length", 100, 2000, 500, 100)
 override_skip = st.sidebar.checkbox("Force summary even if relevance is low")
 delay = st.sidebar.slider("Request Delay (seconds)", 0.0, 2.0, 0.2, 0.1)
@@ -55,7 +56,20 @@ if generate:
         st.warning("Please upload a file.")
         st.stop()
 
-    raw_text = extract_text_from_zip(uploaded_file) if uploaded_file.name.endswith(".zip") else extract_text_from_pdf(uploaded_file)
+    if uploaded_file.name.endswith(".zip"):
+        raw_text = extract_text_from_zip(uploaded_file)
+    elif uploaded_file.name.endswith(".txt"):
+        raw_text = uploaded_file.read().decode("utf-8")
+    elif uploaded_file.name.endswith(".json"):
+      try:
+        data = json.load(uploaded_file)
+        raw_text = json.dumps(data, indent=2)
+      except Exception as e:
+        st.error(f"Could not parse JSON: {e}")
+        st.stop()
+    else:
+        raw_text = extract_text_from_pdf(uploaded_file)
+
 
     keyword_text = extract_keywords_from_text(raw_text, openai_client)
 
