@@ -74,7 +74,7 @@ if generate:
     keyword_text = extract_keywords_from_text(raw_text, openai_client)
 
     if not keyword_text.strip():
-        fallback_chunks = chunk_text_by_tokens(raw_text, chunk_size=1000, overlap=100)
+        fallback_chunks = chunk_text_by_tokens(raw_text)
         for chunk in fallback_chunks:
             keyword_text = extract_keywords_from_text(chunk, openai_client)
             if keyword_text.strip():
