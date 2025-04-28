@@ -100,9 +100,9 @@ if generate:
 
     if score >= 0.8:
         label = "Excellent"
-    elif score >= 0.6:
+    elif score >= 0.7:
         label = "Good"
-    elif score >= 0.5:
+    elif score >= 0.6:
         label = "Moderate"
     else:
         label = "Poor"
