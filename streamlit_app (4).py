@@ -1,204 +1,129 @@
+
 import os
 import zipfile
-from PyPDF2 import PdfReader
-from PyPDF2.errors import PdfReadError
 import streamlit as st
+import numpy as np
+import faiss
+import tiktoken
+from PyPDF2 import PdfReader
 from openai import OpenAI
-import tiktoken 
+from astrapy import DataAPIClient
 
 # --------------------
-# Configuration & Secrets
+# Config
 # --------------------
-# In Streamlit Secrets panel:
-# [openai]
-# api_key = "<YOUR-SK-KEY>"
+OPENAI_API_KEY = st.secrets["openai"]["api_key"]
+openai_client = OpenAI(api_key=OPENAI_API_KEY)
+encoder = tiktoken.encoding_for_model("gpt-4o")
 
-openai_client = OpenAI(api_key=st.secrets["openai"]["api_key"])
+# AstraDB Config
+profile_client = DataAPIClient(st.secrets["astra"]["profile_token"])
+glossary_client = DataAPIClient(st.secrets["astra"]["glossary_token"])
 
-# --------------------
-# Persona descriptions
-# --------------------
-DESCRIPTIONS = {
-    "Vendor Security Specialist": (
-        "Vendor security specialists are responsible for assessing and managing the cybersecurity posture of "
-        "third‑party vendors as well as the vendor’s products and services. They focus on integrations, data "
-        "security practices, SOC 2 and ISO 27001 compliance, vendor audits, and security clauses in contracts."
-    ),
-    "Network Security Analyst": (
-        "Network Security Analysts secure data transmission within an organization’s IT infrastructure, including "
-        "cloud and on‑prem environments. Responsibilities include firewalls, IDS/IPS, VPNs, network segmentation, "
-        "zero‑trust architecture, traffic monitoring, access controls, and incident response."
-    ),
-    "Cyber Risk Analyst / CISO / ISO": (
-        "Cyber Risk Analysts identify and prioritize risks to the organization’s IT environment. CISOs and ISOs oversee "
-        "strategic direction of cybersecurity policies, ensure regulatory compliance (e.g. GDPR), lead incident response, "
-        "crisis management, and align security practices with business objectives."
-    ),
-    "Application Security Analyst": (
-        "Application Security Analysts focus on secure coding practices, identify vulnerabilities in development frameworks, "
-        "monitor the OWASP Top 10 and zero‑day threats, and integrate SAST/DAST tools into CI/CD pipelines."
-    ),
-    "Threat Intelligence Analyst": (
-        "Threat Intelligence Analysts track evolving threat actor TTPs, especially those targeting financial systems. "
-        "They analyze supply chain attacks, use MITRE ATT&CK, monitor initial access and lateral movement, "
-        "and collaborate with sources like FS‑ISAC."
-    ),
-    "DLP / Insider Threat Analyst": (
-        "DLP and Insider Threat Analysts monitor internal data misuse, detect policy failures, USB/file transfers, "
-        "shadow IT activities, and enforce DLP policies using UEBA platforms."
-    ),
-    "Malware Analyst": (
-        "Malware Analysts reverse‑engineer malware, study payload behavior, track new strains, use YARA and Ghidra, "
-        "and analyze IOCs to understand ransomware, trojans, and C2 frameworks."
-    ),
-}
+persona_db = profile_client.get_database_by_api_endpoint("https://b897d7d9-a304-411c-abd0-836a9f38cc78-us-east1.apps.astra.datastax.com")
+glossary_db = glossary_client.get_database_by_api_endpoint("https://255cbde1-b53f-4dc1-b18b-8f9dbc13d28f-us-east1.apps.astra.datastax.com")
+
+persona_collection = persona_db["persona_vectors"]
+glossary_collection = glossary_db["glossary_vectors"]
 
 # --------------------
-# PDF text extraction
+# Embedding
 # --------------------
-def extract_text_from_pdf(file) -> str:
+def get_embedding(text):
+    response = openai_client.embeddings.create(input=text, model="text-embedding-3-small")
+    return np.array(response.data[0].embedding, dtype=np.float32)
+
+# --------------------
+# FAISS Similarity
+# --------------------
+def build_faiss_index(texts):
+    dim = len(get_embedding("sample"))
+    index = faiss.IndexFlatL2(dim)
+    vectors = [get_embedding(t) for t in texts]
+    index.add(np.array(vectors))
+    return index, vectors
+
+def match_persona(doc_text, persona_names, persona_texts):
+    index, _ = build_faiss_index(persona_texts)
+    doc_vec = get_embedding(doc_text)
+    scores, idxs = index.search(np.array([doc_vec]), k=1)
+    return persona_names[idxs[0][0]]
+
+# --------------------
+# Astra Vector Search
+# --------------------
+def query_astra_vectors(collection, embedding, top_k):
+    result = collection.vector_find(vector=embedding, limit=top_k)
+    return result["data"]["documents"]
+
+# --------------------
+# PDF Text Extraction
+# --------------------
+def extract_text_from_pdf(file):
     reader = PdfReader(file)
-    pages = []
-    for page in reader.pages:
-        text = page.extract_text()
-        if text:
-            pages.append(text)
-    return "\n\n".join(pages)
+    return "\n\n".join([p.extract_text() for p in reader.pages if p.extract_text()])
 
-def extract_text_from_zip(file) -> str:
-    texts = []
+def extract_text_from_zip(file):
     with zipfile.ZipFile(file) as z:
-        for name in z.namelist():
-            if name.lower().endswith(".pdf"):
-                with z.open(name) as pdf_file:
-                    try:
-                        texts.append(extract_text_from_pdf(pdf_file))
-                    except PdfReadError:
-                        texts.append(f"[ERROR READING {name}]")
-    return "\n\n".join(texts)
+        return "\n\n".join([
+            extract_text_from_pdf(z.open(n)) for n in z.namelist() if n.lower().endswith(".pdf")
+        ])
 
 # --------------------
-# Streamlit UI
+# Streamlit App
 # --------------------
 st.set_page_config(page_title="Persona Summarizer", layout="wide")
-st.title("Cybersecurity Persona–Based Summarizer")
+st.title("Cybersecurity Persona-Based Summarizer")
 
-# Sidebar controls
-st.sidebar.header("Controls")
-persona = st.sidebar.selectbox("Select Persona", list(DESCRIPTIONS.keys()))
-uploaded_file = st.sidebar.file_uploader(
-    "Upload a PDF or ZIP of PDFs",
-    type=["pdf", "zip"],
-    help="Max size: ~200 MB",
-)
-max_toks = st.sidebar.slider(
-    "Max summary length (tokens)",
-    min_value=100,
-    max_value=2000,
-    value=500,
-    step=100,
-)
+# Fetch available personas from AstraDB (profile DB)
+persona_docs = persona_collection.find()
+persona_list = [doc["name"] for doc in persona_docs["data"]["documents"]]
+persona = st.sidebar.selectbox("Select Persona", persona_list)
+
+# Fetch full description for selected persona
+persona_doc = persona_collection.find_one({"name": {"$eq": persona}})
+persona_description = persona_doc["data"]["document"]["text"] if persona_doc["status"]["code"] == 200 else ""
+uploaded_file = st.sidebar.file_uploader("Upload PDF or ZIP", type=["pdf", "zip"])
+max_toks = st.sidebar.slider("Max tokens", 100, 2000, 500, 100)
 generate = st.sidebar.button("Generate Summary")
 
 if generate:
     if not uploaded_file:
-        st.sidebar.warning("Please upload a file first.")
+        st.warning("Please upload a file.")
         st.stop()
 
-    name = uploaded_file.name.lower()
-    encoder = tiktoken.encoding_for_model("gpt-4o")
+    # Extract text
+    raw_text = extract_text_from_zip(uploaded_file) if uploaded_file.name.endswith(".zip") else extract_text_from_pdf(uploaded_file)
 
-    # Helper to truncate text to fit under our token‑per‑minute budget
-    def truncate_text(text: str, persona_desc: str, max_toks: int) -> str:
-        sys_tokens = len(encoder.encode(persona_desc))
-        preamble   = "Document content:\n\n"
-        postamble  = f"\n\nPlease summarize for a {persona}, using up to {max_toks} tokens."
-        overhead   = (
-            sys_tokens
-            + len(encoder.encode(preamble))
-            + len(encoder.encode(postamble))
-            + max_toks
-            + 50
-        )
-        tpm_limit        = 30_000
-        allowed_doc_tok  = max(0, tpm_limit - overhead)
-
+    # Truncate for token safety
+    def truncate(text, persona_text, max_toks):
+        pre = "Document content:\n\n"
+        post = f"\n\nPlease summarize for a {persona}."
+        overhead = len(encoder.encode(persona_text + pre + post)) + max_toks + 50
         doc_tokens = encoder.encode(text)
-        if len(doc_tokens) > allowed_doc_tok:
-            st.warning(f"⚠️ Input was too long and has been truncated to ~{allowed_doc_tok} tokens.")
-            doc_tokens = doc_tokens[:allowed_doc_tok]
-            return encoder.decode(doc_tokens)
-        return text
+        return encoder.decode(doc_tokens[:max(0, 30000 - overhead)])
 
-    # ZIP branch
-    if name.endswith(".zip"):
-        # extract
-        extracted_docs = {}
-        with zipfile.ZipFile(uploaded_file) as z:
-            for pdf_name in z.namelist():
-                if pdf_name.lower().endswith(".pdf"):
-                    with z.open(pdf_name) as f:
-                        raw = extract_text_from_pdf(f)
-                        extracted_docs[pdf_name] = truncate_text(raw, DESCRIPTIONS[persona], max_toks)
+    doc_text = truncate(raw_text, persona_description, max_toks)
+    doc_embedding = get_embedding(doc_text)
 
-        # summarize
-        summary_by_pdf = {}
-        for pdf_name, pdf_text in extracted_docs.items():
-            resp = openai_client.chat.completions.create(
-                model="gpt-4o",
-                messages=[
-                    {"role": "system", "content": DESCRIPTIONS[persona]},
-                    {"role": "user",   "content": f"Document content:\n\n{pdf_text}\n\nPlease summarize for a {persona}."},
-                ],
-                max_tokens=max_toks,
-            )
-            summary_by_pdf[pdf_name] = resp.choices[0].message.content
+    # Vector match glossary & persona content
+    glossary_hits = query_astra_vectors(glossary_collection, doc_embedding, top_k=20)
+    glossary_context = "\n\n".join([d.get("text", "") for d in glossary_hits])
 
-        # display
-        for pdf_name, summ in summary_by_pdf.items():
-            st.subheader(pdf_name)
-            st.write(summ)
+    persona_hits = query_astra_vectors(persona_collection, doc_embedding, top_k=1)
+    persona_context = "\n\n".join([d.get("text", "") for d in persona_hits])
 
+    # Prompt
+    system_msg = {"role": "system", "content": persona_description}
+    user_msg = {"role": "user", "content": f"{persona_context}\n\n{glossary_context}\n\n{doc_text}\n\nPlease summarize for a {persona}."}
 
-    # Single‑PDF branch
-    else:
-        with st.spinner("Extracting text…"):
-            raw = extract_text_from_pdf(uploaded_file)
-            document_text = truncate_text(raw, DESCRIPTIONS[persona], max_toks)
-
-        system_msg = {"role": "system", "content": DESCRIPTIONS[persona]}
-        user_msg   = {"role": "user",   "content": f"Document content:\n\n{document_text}\n\nPlease summarize for a {persona}."}
-
-        try:
-            resp    = openai_client.chat.completions.create(
-                         model="gpt-4o",
-                         messages=[system_msg, user_msg],
-                         max_tokens=max_toks,
-                     )
-            summary = resp.choices[0].message.content
-
-            st.subheader(uploaded_file.name)
-            st.write(summary)
-
-        except Exception as e:
-            st.error(f"OpenAI error: {e}")
-
-
-# --------------------
-# Feedback stub
-# --------------------
-def send_feedback_to_sheet(rating: int, comment: str):
-    """
-    TODO: wire this up to Google Sheets (e.g. via gspread) to append each feedback.
-    """
-    pass
-
-st.sidebar.markdown("---")
-st.sidebar.subheader("Rate this summary")
-rating = st.sidebar.radio("Stars", [1, 2, 3, 4, 5], index=4)
-comment = st.sidebar.text_area("Additional comments")
-if st.sidebar.button("Submit Feedback"):
-    send_feedback_to_sheet(rating, comment)
-    st.success(f"Thanks! You rated this {rating} star(s).")
-    if comment:
-        st.info(f"Your comment: “{comment}”")
+    try:
+        response = openai_client.chat.completions.create(
+            model="gpt-4o",
+            messages=[system_msg, user_msg],
+            max_tokens=max_toks
+        )
+        st.subheader(uploaded_file.name)
+        st.write(response.choices[0].message.content)
+    except Exception as e:
+        st.error(f"OpenAI Error: {e}")

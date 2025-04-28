@@ -1,4 +1,5 @@
 {
+  "access_type": "PRIVATE",
   "data": {
     "edges": [
       {
@@ -736,6 +737,34 @@
         "sourceHandle": "{œdataTypeœ:œCombineTextœ,œidœ:œCombineText-oHY8dœ,œnameœ:œcombined_textœ,œoutput_typesœ:[œMessageœ]}",
         "target": "ChatOutput-AJXQh",
         "targetHandle": "{œfieldNameœ:œinput_valueœ,œidœ:œChatOutput-AJXQhœ,œinputTypesœ:[œDataœ,œDataFrameœ,œMessageœ],œtypeœ:œotherœ}"
+      },
+      {
+        "animated": false,
+        "className": "",
+        "data": {
+          "sourceHandle": {
+            "dataType": "CombineText",
+            "id": "CombineText-rxTMS",
+            "name": "combined_text",
+            "output_types": [
+              "Message"
+            ]
+          },
+          "targetHandle": {
+            "fieldName": "input_value",
+            "id": "OpenAIModel-2HPDK",
+            "inputTypes": [
+              "Message"
+            ],
+            "type": "str"
+          }
+        },
+        "id": "xy-edge__CombineText-rxTMS{œdataTypeœ:œCombineTextœ,œidœ:œCombineText-rxTMSœ,œnameœ:œcombined_textœ,œoutput_typesœ:[œMessageœ]}-OpenAIModel-2HPDK{œfieldNameœ:œinput_valueœ,œidœ:œOpenAIModel-2HPDKœ,œinputTypesœ:[œMessageœ],œtypeœ:œstrœ}",
+        "selected": false,
+        "source": "CombineText-rxTMS",
+        "sourceHandle": "{œdataTypeœ:œCombineTextœ,œidœ:œCombineText-rxTMSœ,œnameœ:œcombined_textœ,œoutput_typesœ:[œMessageœ]}",
+        "target": "OpenAIModel-2HPDK",
+        "targetHandle": "{œfieldNameœ:œinput_valueœ,œidœ:œOpenAIModel-2HPDKœ,œinputTypesœ:[œMessageœ],œtypeœ:œstrœ}"
       }
     ],
     "nodes": [
@@ -1007,7 +1036,7 @@
                 "show": true,
                 "title_case": false,
                 "type": "str",
-                "value": ""
+                "value": "Final_Prompt"
               },
               "code": {
                 "advanced": true,
@@ -2033,7 +2062,7 @@
                 "show": true,
                 "title_case": false,
                 "type": "str",
-                "value": ""
+                "value": "Profile-DB_access"
               }
             },
             "tool_mode": false
@@ -2191,7 +2220,7 @@
                 "tool_mode": false,
                 "trace_as_metadata": true,
                 "type": "str",
-                "value": "https://255cbde1-b53f-4dc1-b18b-8f9dbc13d28f-us-east1.apps.astra.datastax.com"
+                "value": ""
               },
               "astradb_vectorstore_kwargs": {
                 "_input_type": "NestedDictInput",
@@ -2250,7 +2279,7 @@
               },
               "collection_name": {
                 "_input_type": "DropdownInput",
-                "advanced": false,
+                "advanced": true,
                 "combobox": true,
                 "dialog_inputs": {
                   "fields": {
@@ -2502,17 +2531,8 @@
                 "info": "The Database name for the Astra DB instance.",
                 "load_from_db": false,
                 "name": "database_name",
-                "options": [
-                  "glossary_db"
-                ],
-                "options_metadata": [
-                  {
-                    "api_endpoint": "https://255cbde1-b53f-4dc1-b18b-8f9dbc13d28f-us-east1.apps.astra.datastax.com",
-                    "collections": 1,
-                    "org_id": "5b383438-cd7b-4f2c-aba2-41c497d8c628",
-                    "status": null
-                  }
-                ],
+                "options": [],
+                "options_metadata": [],
                 "placeholder": "",
                 "real_time_refresh": true,
                 "refresh_button": true,
@@ -2522,7 +2542,7 @@
                 "tool_mode": false,
                 "trace_as_metadata": true,
                 "type": "str",
-                "value": "glossary_db"
+                "value": ""
               },
               "deletion_field": {
                 "_input_type": "StrInput",
@@ -2785,7 +2805,7 @@
                 "show": true,
                 "title_case": false,
                 "type": "str",
-                "value": ""
+                "value": "Glossary DB - API Key"
               }
             },
             "tool_mode": false
@@ -2796,7 +2816,7 @@
         "dragging": false,
         "id": "AstraDB-OohCV",
         "measured": {
-          "height": 567,
+          "height": 485,
           "width": 320
         },
         "position": {
@@ -3774,7 +3794,7 @@
                 "show": true,
                 "title_case": false,
                 "type": "str",
-                "value": ""
+                "value": "Glossary Keyword Pipe"
               },
               "code": {
                 "advanced": true,
@@ -4637,6 +4657,7 @@
             "frozen": false,
             "icon": "MessagesSquare",
             "legacy": false,
+            "lf_version": "1.3.2",
             "metadata": {},
             "minimized": true,
             "output_types": [],
@@ -4755,11 +4776,12 @@
                   "bmp",
                   "image"
                 ],
-                "file_path": "",
+                "file_path": [
+                  "f3a98b60-008b-4bbf-b0d8-228802c249c0/2025-04-24_13-25-25_Threat Intelligence Complete Guide to Process and Technology.pdf"
+                ],
                 "info": "Files to be sent with the message.",
                 "list": true,
                 "list_add_label": "Add More",
-                "load_from_db": false,
                 "name": "files",
                 "placeholder": "",
                 "required": false,
@@ -4927,7 +4949,7 @@
           "x": -3342.093040187524,
           "y": 245.03901085260043
         },
-        "selected": true,
+        "selected": false,
         "type": "genericNode"
       },
       {
@@ -5178,8 +5200,8 @@
           "width": 320
         },
         "position": {
-          "x": 1742.0747670087972,
-          "y": -483.9919914849362
+          "x": 1838.6230003457822,
+          "y": -494.70600466824663
         },
         "selected": false,
         "type": "genericNode"
@@ -5503,7 +5525,7 @@
                 "show": true,
                 "title_case": false,
                 "type": "str",
-                "value": ""
+                "value": "Doc-Persona Embedding"
               },
               "openai_api_type": {
                 "_input_type": "MessageTextInput",
@@ -5773,7 +5795,7 @@
                 "show": true,
                 "title_case": false,
                 "type": "code",
-                "value": "import numpy as np\n\nfrom langflow.custom import Component\nfrom langflow.io import DataInput, DropdownInput, Output\nfrom langflow.schema import Data\n\n\nclass EmbeddingSimilarityComponent(Component):\n    display_name: str = \"Embedding Similarity\"\n    description: str = \"Compute selected form of similarity between two embedding vectors.\"\n    icon = \"equal\"\n\n    inputs = [\n        DataInput(\n            name=\"embedding_vectors\",\n            display_name=\"Embedding Vectors\",\n            info=\"A list containing exactly two data objects with embedding vectors to compare.\",\n            is_list=True,\n            required=True,\n        ),\n        DropdownInput(\n            name=\"similarity_metric\",\n            display_name=\"Similarity Metric\",\n            info=\"Select the similarity metric to use.\",\n            options=[\"Cosine Similarity\", \"Euclidean Distance\", \"Manhattan Distance\"],\n            value=\"Cosine Similarity\",\n        ),\n    ]\n\n    outputs = [\n        Output(display_name=\"Similarity Data\", name=\"similarity_data\", method=\"compute_similarity\"),\n    ]\n\n    def compute_similarity(self) -> Data:\n        embedding_vectors: list[Data] = self.embedding_vectors\n\n        # Validate input\n        if len(embedding_vectors) != 2:\n            raise ValueError(\"Exactly two embedding vectors are required.\")\n\n        embedding_1 = np.array(embedding_vectors[0].data[\"embeddings\"])\n        embedding_2 = np.array(embedding_vectors[1].data[\"embeddings\"])\n\n        if embedding_1.shape != embedding_2.shape:\n            similarity_score = {\"error\": \"Embeddings must have the same dimensions.\"}\n            score_value = None\n            match_label = \"❌ Error: mismatched dimensions\"\n        else:\n            similarity_metric = self.similarity_metric\n\n            match similarity_metric:\n                case \"Cosine Similarity\":\n                    score_value = float(np.dot(embedding_1, embedding_2) / (np.linalg.norm(embedding_1) * np.linalg.norm(embedding_2)))\n                    similarity_score = {\"cosine_similarity\": score_value}\n\n                    # Rating label\n                    match score_value:\n                        case v if v >= 0.85:\n                            match_label = f\"🟢 Excellent match: {v:.2f}\"\n                        case v if v >= 0.65:\n                            match_label = f\"🟡 Moderate match: {v:.2f}\"\n                        case v if v >= 0.40:\n                            match_label = f\"🟠 Weak match: {v:.2f}\"\n                        case _:\n                            match_label = f\"🔴 Poor match: {score_value:.2f}\"\n\n                case \"Euclidean Distance\":\n                    score_value = float(np.linalg.norm(embedding_1 - embedding_2))\n                    similarity_score = {\"euclidean_distance\": score_value}\n                    match_label = f\"📏 Euclidean distance: {score_value:.2f}\"\n\n                case \"Manhattan Distance\":\n                    score_value = float(np.sum(np.abs(embedding_1 - embedding_2)))\n                    similarity_score = {\"manhattan_distance\": score_value}\n                    match_label = f\"📐 Manhattan distance: {score_value:.2f}\"\n\n                case _:\n                    score_value = None\n                    similarity_score = {\"error\": \"Unsupported metric.\"}\n                    match_label = \"❌ Unknown similarity metric\"\n\n        return Data(\n            data={\n                \"similarity_score\": similarity_score,\n                \"match_rating\": match_label\n            },\n            text_key=\"match_rating\"\n        )\n"
+                "value": "import numpy as np\n\nfrom langflow.custom import Component\nfrom langflow.io import DataInput, DropdownInput, Output\nfrom langflow.schema import Data\n\n\nclass EmbeddingSimilarityComponent(Component):\n    display_name: str = \"Embedding Similarity\"\n    description: str = \"Compute selected form of similarity between two embedding vectors.\"\n    icon = \"equal\"\n\n    inputs = [\n        DataInput(\n            name=\"embedding_vectors\",\n            display_name=\"Embedding Vectors\",\n            info=\"A list containing exactly two data objects with embedding vectors to compare.\",\n            is_list=True,\n            required=True,\n        ),\n        DropdownInput(\n            name=\"similarity_metric\",\n            display_name=\"Similarity Metric\",\n            info=\"Select the similarity metric to use.\",\n            options=[\"Cosine Similarity\", \"Euclidean Distance\", \"Manhattan Distance\"],\n            value=\"Cosine Similarity\",\n        ),\n    ]\n\n    outputs = [\n        Output(display_name=\"Similarity Data\", name=\"similarity_data\", method=\"compute_similarity\"),\n    ]\n\n    def compute_similarity(self) -> Data:\n        embedding_vectors: list[Data] = self.embedding_vectors\n\n        # Validate input\n        if len(embedding_vectors) != 2:\n            raise ValueError(\"Exactly two embedding vectors are required.\")\n\n        embedding_1 = np.array(embedding_vectors[0].data[\"embeddings\"])\n        embedding_2 = np.array(embedding_vectors[1].data[\"embeddings\"])\n\n        if embedding_1.shape != embedding_2.shape:\n            similarity_score = {\"error\": \"Embeddings must have the same dimensions.\"}\n            score_value = None\n            match_label = \"❌ Error: mismatched dimensions\"\n        else:\n            similarity_metric = self.similarity_metric\n\n            match similarity_metric:\n                case \"Cosine Similarity\":\n                    score_value = float(np.dot(embedding_1, embedding_2) / (np.linalg.norm(embedding_1) * np.linalg.norm(embedding_2)))\n                    similarity_score = {\"cosine_similarity\": score_value}\n\n                    # Rating label\n                    match score_value:\n                        case v if v >= 0.80:\n                            match_label = f\"🟢 Excellent match: {v:.2f}\"\n                        case v if v >= 0.60:\n                            match_label = f\"🟡 Moderate match: {v:.2f}\"\n                        case v if v >= 0.40:\n                            match_label = f\"🟠 Weak match: {v:.2f}\"\n                        case _:\n                            match_label = f\"🔴 Poor match: {score_value:.2f}\"\n\n                case \"Euclidean Distance\":\n                    score_value = float(np.linalg.norm(embedding_1 - embedding_2))\n                    similarity_score = {\"euclidean_distance\": score_value}\n                    match_label = f\"📏 Euclidean distance: {score_value:.2f}\"\n\n                case \"Manhattan Distance\":\n                    score_value = float(np.sum(np.abs(embedding_1 - embedding_2)))\n                    similarity_score = {\"manhattan_distance\": score_value}\n                    match_label = f\"📐 Manhattan distance: {score_value:.2f}\"\n\n                case _:\n                    score_value = None\n                    similarity_score = {\"error\": \"Unsupported metric.\"}\n                    match_label = \"❌ Unknown similarity metric\"\n\n        return Data(\n            data={\n                \"similarity_score\": similarity_score,\n                \"match_rating\": match_label\n            },\n            text_key=\"match_rating\"\n        )\n"
               },
               "embedding_vectors": {
                 "_input_type": "DataInput",
@@ -6274,7 +6296,7 @@
         },
         "position": {
           "x": 1347.3963278697117,
-          "y": -910.6701958650683
+          "y": -909.198092732145
         },
         "selected": false,
         "type": "genericNode"
@@ -6718,24 +6740,32 @@
           "width": 192
         },
         "position": {
-          "x": 2275.3776217309987,
-          "y": -127.15724575254843
+          "x": 2302.571945942122,
+          "y": -140.75440785810994
         },
         "selected": false,
         "type": "genericNode"
       }
     ],
     "viewport": {
-      "x": 1849.6759363787487,
-      "y": 525.621608729515,
-      "zoom": 0.4948154665398356
+      "x": 1258.942224068841,
+      "y": 895.8047118451466,
+      "zoom": 0.6359301153782259
     }
   },
   "description": "Load your data for chat context with Retrieval Augmented Generation.",
   "endpoint_name": null,
+  "folder_id": "bcaed905-7269-4d42-a2ec-f823fd86a5bd",
+  "fs_path": null,
+  "gradient": null,
+  "icon": null,
+  "icon_bg_color": null,
   "id": "f3a98b60-008b-4bbf-b0d8-228802c249c0",
   "is_component": false,
-  "last_tested_version": "1.3.2",
-  "name": "Cybersecurity Persona RAG - v1.0",
-  "tags": null
+  "locked": false,
+  "name": "Vector Store RAG",
+  "tags": null,
+  "updated_at": "2025-04-25T01:13:16+00:00",
+  "user_id": "49ca909c-e465-4a78-b2e0-fce7010d2939",
+  "webhook": false
 }

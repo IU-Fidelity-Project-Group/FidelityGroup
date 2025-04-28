@@ -1,0 +1,37 @@
+{
+  "text": "",  // A summary paragraph describing this persona's role, perspective, and what kind of information they care about. Used as the embedding text.
+
+  "metadata": {
+    "persona": "",  // Persona name (e.g., "SOC Analyst", "Cloud Security Architect")
+
+    "description": "",  // One or two sentences explaining what this persona does and why they matter in cybersecurity
+
+    "tone": "",  // Preferred tone of communication (e.g., "serious and investigative", "executive and strategic")
+
+    "communication_style": "",  // How this persona prefers information presented (e.g., "brief and alert-focused", "visual and evidence-based")
+
+    "content_format": "",  // Their preferred report or content structure (e.g., "dashboard summary", "incident dossier", "executive summary")
+
+    "security_domain": "",  // Their main cybersecurity area (e.g., "Threat Intelligence", "Application Security", "Cloud Security")
+
+    "role_tags": [],  // Keywords or tags for filtering/searching (e.g., ["SOC", "incident response", "SIEM"])
+
+    "goals": [],  // What this persona is trying to accomplish in their role (e.g., ["Minimize false positives", "Detect insider threats"])
+
+    "common_tasks": [],  // Typical daily or weekly tasks they perform (e.g., ["Monitor alerts", "Review DLP reports", "Perform risk assessments"])
+
+    "tools": [],  // Tools or platforms this persona typically uses (e.g., ["Splunk", "CrowdStrike", "OneTrust"])
+
+    "languages": [],  // Programming/scripting languages relevant to their job (e.g., ["Python", "Bash"])
+
+    "frameworks": [],  // Compliance or security frameworks they rely on (e.g., ["MITRE ATT&CK", "NIST 800-53", "SOC 2"])
+
+    "influences": [],  // Teams or departments they collaborate with or report to (e.g., ["IR", "GRC", "Legal"])
+
+    "sample_questions": [],  // Sample questions they might ask when reviewing a document (e.g., "How do I detect lateral movement in Azure?")
+
+    "success_indicators": [],  // Signs that this persona's work is effective (e.g., ["Fewer false positives", "Improved detection fidelity"])
+
+    "keywords": []  // Key terms or concepts relevant to this role, useful for vector matching (e.g., ["SIEM", "pivoting", "zero trust"])
+  }
+}

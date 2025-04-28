@@ -4,3 +4,4 @@ tiktoken          # Token counting / truncation
 numpy             # Vector manipulation
 pdfminer.six      # Structured PDF parsing (replaces PyPDF2)
 astrapy           # AstraDB integration
+

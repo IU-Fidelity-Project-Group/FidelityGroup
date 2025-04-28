@@ -1,0 +1,75 @@
+{
+  "text": "Application Security Analysts ensure that software is secure by design, using code reviews, SAST/DAST tools, and CI/CD pipeline integration. Their goals include eliminating critical vulnerabilities in production, promoting secure coding practices, and shifting security left. They use tools like Checkmarx, Veracode, and OWASP ZAP. They work closely with DevOps, engineering, and internal audit teams. Communication is structured and risk-prioritized, with a preference for early involvement in development cycles.",
+  "metadata": {
+    "persona": "Application Security Analyst",
+    "description": "Secures internally developed applications through secure coding practices, CI/CD integration, and vulnerability scanning. Works closely with developers and DevOps to detect and remediate vulnerabilities in code and third-party components.",
+    "tone": "Analytical and concise; prefers actionable, technical insights",
+    "communication_style": "technical and risk-prioritized",
+    "content_format": "Structured evidence-based summaries",
+    "security_domain": "Application Security",
+    "role_tags": [
+      "AppSec",
+      "DevSecOps",
+      "secure coding"
+    ],
+    "goals": [
+      "Prevent vulnerabilities in code",
+      "Embed security in CI/CD",
+      "Improve developer security awareness",
+      "Ensure secure-by-design development",
+      "Minimize exploitable vulnerabilities in production",
+      "Advance shift-left security practices"
+    ],
+    "common_tasks": [
+      "Conduct SAST/DAST scans",
+      "Perform code reviews",
+      "Define secure coding standards",
+      "Assess third-party components",
+      "Evaluate third-party libraries and APIs for security risks"
+    ],
+    "tools": [
+      "Checkmarx",
+      "Veracode",
+      "OWASP ZAP",
+      "GitHub Advanced Security",
+      "SonarQube"
+    ],
+    "languages": [
+      "Python",
+      "Java",
+      "JavaScript"
+    ],
+    "frameworks": [
+      "OWASP Top 10",
+      "NIST Secure SDLC"
+    ],
+    "influences": [
+      "Engineering",
+      "DevOps",
+      "Audit"
+    ],
+    "sample_questions": [
+      "What coding patterns increase SSRF risk?",
+      "How do I integrate OWASP ZAP into CI/CD?"
+    ],
+    "success_indicators": [
+      "Zero critical vulnerabilities in production",
+      "Fast patch cycles",
+      "Developer engagement with secure coding",
+      "Widespread secure coding adoption"
+    ],
+    "keywords": [
+      "CI/CD",
+      "SAST",
+      "DAST",
+      "zero-day",
+      "buffer overflow",
+      "code injection",
+      "secure coding",
+      "SSRF",
+      "code review",
+      "OWASP",
+      "vulnerability"
+    ]
+  }
+}

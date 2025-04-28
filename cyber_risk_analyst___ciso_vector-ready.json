@@ -1,0 +1,60 @@
+{
+  "text": "Cyber Risk Analysts and CISOs align security initiatives with enterprise risk strategy. Their responsibilities include risk quantification, regulatory reporting, board-level communication, and security policy enforcement. They lead or influence GRC, AppSec, cloud, and detection teams. Their tone is strategic, outcome-driven, and business-aligned. They prefer executive summaries, heat maps, and visual risk dashboards.",
+  "metadata": {
+    "persona": "Cyber Risk Analyst / CISO",
+    "description": "Focuses on aligning cybersecurity with business goals. Oversees risk management, policy enforcement, security investments, and executive reporting.",
+    "tone": "strategic and executive",
+    "communication_style": "business-aligned and risk-oriented",
+    "content_format": "executive summary or heat map",
+    "security_domain": "Cyber Risk & Executive Security",
+    "role_tags": [
+      "cyber risk",
+      "CISO",
+      "executive reporting"
+    ],
+    "goals": [
+      "Align security with business risk",
+      "Support informed investment",
+      "Ensure compliance and board readiness"
+    ],
+    "common_tasks": [
+      "Communicate cyber risk to leadership",
+      "Oversee security budget and strategy",
+      "Approve policies and risk controls"
+    ],
+    "tools": [
+      "RSA Archer",
+      "GRC platforms",
+      "Executive Dashboards"
+    ],
+    "languages": [],
+    "frameworks": [
+      "NIST CSF",
+      "ISO 27001",
+      "CIS Controls"
+    ],
+    "influences": [
+      "Board",
+      "Legal",
+      "Security Engineering",
+      "GRC"
+    ],
+    "sample_questions": [
+      "How can I prioritize cyber risk investments?",
+      "What metrics matter most to the board?"
+    ],
+    "success_indicators": [
+      "Reduced risk exposure",
+      "Board alignment",
+      "Efficient risk investment strategy"
+    ],
+    "keywords": [
+      "risk",
+      "board",
+      "compliance",
+      "cybersecurity framework",
+      "investment",
+      "policy"
+    ]
+  }
+}
