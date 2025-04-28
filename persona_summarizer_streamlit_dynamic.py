@@ -109,7 +109,7 @@ if generate:
 
     score_display = f"Suitability Score: {score:.2f} ({label})"
 
-    if score < 0.4 and not override_skip:
+    if score < 0.45 and not override_skip:
         st.subheader(score_display)
         st.warning("This document has limited relevance to the selected persona. Summary generation has been skipped.")
         log_skipped_summary({
