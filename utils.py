@@ -137,7 +137,7 @@ def fetch_persona_names(endpoint_url, token, collection_name="profile_collection
         all_docs = collection.find()
         return sorted({doc["metadata"]["persona"] for doc in all_docs if "metadata" in doc and "persona" in doc["metadata"]})
     except Exception as e:
-        print(f"⚠️ Error fetching persona names: {e}")
+        print(f"Error fetching persona names: {e}")
         return []
 
 # ------------------------------
@@ -153,10 +153,10 @@ def fetch_persona_vector(persona_name, endpoint_url, token, collection_name="pro
         if result and "$vector" in result:
             return np.array(result["$vector"], dtype=np.float32)
         else:
-            print("⚠️ No $vector field found in the document.")
+            print("No $vector field found in the document.")
             return np.zeros(1536, dtype=np.float32)
     except Exception as e:
-        print(f"⚠️ Error fetching persona vector: {e}")
+        print(f"Error fetching persona vector: {e}")
         return np.zeros(1536, dtype=np.float32)
 
 # ------------------------------
@@ -172,7 +172,7 @@ def fetch_persona_metadata(persona_name, endpoint_url, token, collection_name="p
         if result and "metadata" in result:
             return result["metadata"]
     except Exception as e:
-        print(f"⚠️ Error fetching persona metadata: {e}")
+        print(f"Error fetching persona metadata: {e}")
     return {}
 
 # ------------------------------
@@ -201,7 +201,7 @@ def extract_keywords_from_text(text, openai_client):
         )
         return response.choices[0].message.content.strip()
     except Exception as e:
-        print(f"⚠️ Error extracting keywords: {e}")
+        print(f"Error extracting keywords: {e}")
         return ""
 
 # ------------------------------
